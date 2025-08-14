@@ -4,12 +4,14 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase";
 import { useAuth } from "../context/AuthContext";
 import "../css/login.css";
+import { FaSun, FaMoon } from "react-icons/fa";
 
 function Login() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [darkMode, setDarkMode] = useState(false);
 
   // Redirect if already logged in
   useEffect(() => {
@@ -26,8 +28,18 @@ function Login() {
     }
   };
 
+  const toggleDarkMode = () => {
+    setDarkMode(!darkMode);
+    document.body.classList.toggle("dark-mode", !darkMode);
+  };
+
   return (
-    <div className="login-container">
+    <div className={`login-container ${darkMode ? "dark-mode" : ""}`}>
+      {/* Dark/Light toggle */}
+      <div className="dark-light-toggle" onClick={toggleDarkMode}>
+        {darkMode ? <FaSun /> : <FaMoon />}
+      </div>
+
       <form onSubmit={handleLogin} className="login-form">
         <h1 className="project-name">TrackStack</h1>
         <h2 className="login-title">Login</h2>

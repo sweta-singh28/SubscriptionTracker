@@ -3,7 +3,10 @@ import PrivateRoute from "./components/PrivateRoute";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
-import SubscriptionForm from "./pages/SubscriptionForm"; // used below
+import Profile from "./pages/Profile";
+import Settings from "./pages/Settings";
+import ViewDetails from "./pages/ViewDetails";
+import SubscriptionForm from "./pages/SubscriptionForm";
 
 function App() {
   return (
@@ -12,6 +15,7 @@ function App() {
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
 
+      {/* Private routes only */}
       <Route
         path="/dashboard"
         element={
@@ -20,7 +24,14 @@ function App() {
           </PrivateRoute>
         }
       />
-
+      <Route
+        path="/view/:id"
+        element={
+          <PrivateRoute>
+            <ViewDetails />
+          </PrivateRoute>
+        }
+      />
       <Route
         path="/add"
         element={
@@ -29,12 +40,27 @@ function App() {
           </PrivateRoute>
         }
       />
-
       <Route
         path="/edit/:id"
         element={
           <PrivateRoute>
             <SubscriptionForm />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/profile"
+        element={
+          <PrivateRoute>
+            <Profile />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/settings"
+        element={
+          <PrivateRoute>
+            <Settings />
           </PrivateRoute>
         }
       />

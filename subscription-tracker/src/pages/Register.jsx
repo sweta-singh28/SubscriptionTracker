@@ -1,17 +1,19 @@
 import { useState, useEffect } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { FaSun, FaMoon } from "react-icons/fa";
+import "../css/register.css";
 
 function Register() {
   const { user } = useAuth();
   const navigate = useNavigate();
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [darkMode, setDarkMode] = useState(false);
 
   // Redirect if already logged in
   useEffect(() => {
@@ -38,48 +40,47 @@ function Register() {
     }
   };
 
+  const toggleDarkMode = () => {
+    setDarkMode(!darkMode);
+    document.body.classList.toggle("dark-mode", !darkMode);
+  };
+
   return (
-    <form
-      onSubmit={handleRegister}
-      style={{ maxWidth: "400px", margin: "auto" }}
-    >
-      <h2>Register</h2>
+    <div className={`register-container ${darkMode ? "dark-mode" : ""}`}>
+      {/* Dark/Light toggle */}
+      <div className="dark-light-toggle" onClick={toggleDarkMode}>
+        {darkMode ? <FaSun /> : <FaMoon />}
+      </div>
 
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      <form onSubmit={handleRegister} className="register-form">
+        <h1 className="project-name">TrackStack</h1>
+        <h2 className="register-title">Create a new account</h2>
 
-      <input
-        type="email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        placeholder="Email"
-        required
-        style={{ width: "100%", padding: "10px", marginBottom: "10px" }}
-      />
+        {error && <p className="error-text">{error}</p>}
 
-      <input
-        type="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        placeholder="Password (min 6 characters)"
-        required
-        style={{ width: "100%", padding: "10px", marginBottom: "10px" }}
-      />
+        <input
+          type="email"
+          placeholder="Email"
+          required
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <input
+          type="password"
+          placeholder="Password (min 6 characters)"
+          required
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        <button type="submit" disabled={loading}>
+          {loading ? "Registering..." : "Register"}
+        </button>
 
-      <button
-        type="submit"
-        disabled={loading}
-        style={{
-          width: "100%",
-          padding: "10px",
-          backgroundColor: "#4CAF50",
-          color: "white",
-          border: "none",
-          cursor: "pointer",
-        }}
-      >
-        {loading ? "Registering..." : "Register"}
-      </button>
-    </form>
+        <p className="register-text">
+          Already have an account? <Link to="/login">Login</Link>
+        </p>
+      </form>
+    </div>
   );
 }
 

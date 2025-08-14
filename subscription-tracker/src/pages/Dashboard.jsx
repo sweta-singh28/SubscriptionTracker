@@ -1,124 +1,189 @@
 import { useEffect, useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import {
-  subscribeToUserSubscriptions,
-  deleteSubscription,
-} from "../utils/subscriptionService";
+import { subscribeToUserSubscriptions } from "../utils/subscriptionService";
 import { signOut } from "firebase/auth";
-import { auth } from "../firebase";
+import { auth, db } from "../firebase";
+import { doc, onSnapshot } from "firebase/firestore";
+import { FaGithub, FaLinkedin, FaTwitter } from "react-icons/fa";
 
 export default function Dashboard() {
   const { user, loading } = useAuth();
   const [subscriptions, setSubscriptions] = useState([]);
   const [upcoming, setUpcoming] = useState([]);
+  const [search, setSearch] = useState("");
+  const [reminderDays, setReminderDays] = useState(7);
   const navigate = useNavigate();
 
+  // Helper function to compute upcoming subscriptions
+  const computeUpcoming = (subs, daysWindow) => {
+    const now = new Date();
+    const limit = new Date();
+    limit.setDate(now.getDate() + Number(daysWindow || 7));
+    return subs.filter((s) => {
+      if (!s.renewDate?.toDate) return false;
+      const rd = s.renewDate.toDate();
+      return rd >= now && rd <= limit;
+    });
+  };
+
+  // listen for user's reminderDays setting
   useEffect(() => {
     if (!user) return;
-    const computeUpcoming = (subs) => {
-      const now = new Date();
-      const weekLater = new Date();
-      weekLater.setDate(now.getDate() + 7);
-      return subs.filter((s) => {
-        if (!s.renewDate?.toDate) return false;
-        const rd = s.renewDate.toDate();
-        return rd >= now && rd <= weekLater;
-      });
-    };
+    const ref = doc(db, "users", user.uid);
+    const unsub = onSnapshot(ref, (snap) => {
+      setReminderDays(snap.data()?.reminderDays ?? 7);
+    });
+    return () => unsub();
+  }, [user]);
+
+  // subscribe to user's subscriptions
+  useEffect(() => {
+    if (!user) return;
 
     const unsubscribe = subscribeToUserSubscriptions(user.uid, (subs) => {
       const sorted = [...subs].sort((a, b) => {
-        const da = a.renewDate?.toDate() || new Date(0);
-        const db = b.renewDate?.toDate() || new Date(0);
+        const da = a.renewDate?.toDate?.() || new Date(0);
+        const db = b.renewDate?.toDate?.() || new Date(0);
         return da - db;
       });
       setSubscriptions(sorted);
-      setUpcoming(computeUpcoming(sorted));
     });
+
     return () => unsubscribe();
   }, [user]);
 
-  const handleDelete = async (id) => {
-    if (window.confirm("Are you sure you want to delete this subscription?")) {
-      try {
-        await deleteSubscription(id);
-      } catch (e) {
-        console.error(e);
-        alert("Failed to delete: " + e.message);
-      }
+  // Re-compute upcoming subscriptions whenever subscriptions or reminderDays changes
+  useEffect(() => {
+    if (subscriptions.length > 0 || upcoming.length > 0) {
+      setUpcoming(computeUpcoming(subscriptions, reminderDays));
     }
-  };
+  }, [subscriptions, reminderDays]);
 
   const handleLogout = async () => {
     try {
       await signOut(auth);
-      navigate("/"); // or "/login" if that's your login route
+      navigate("/");
     } catch (error) {
       console.error("Logout error:", error);
       alert("Failed to logout");
     }
   };
 
-  if (loading) return <div>Loading...</div>;
-  if (!user) return <div>Please login.</div>;
+  if (loading) return <div className="loading">Loading...</div>;
+  if (!user) return <div className="not-logged">Please login.</div>;
+
+  // filter minimal view
+  const filteredSubs = subscriptions.filter((s) =>
+    (s.name || "").toLowerCase().includes(search.toLowerCase())
+  );
+
+  // card click -> view detail page
+  const openDetail = (id) => {
+    navigate(`/view/${id}`);
+  };
+
+  const onCardKeyDown = (e, id) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      openDetail(id);
+    }
+  };
 
   return (
-    <div>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <h1>Your Subscriptions</h1>
-        <div style={{ display: "flex", gap: "10px" }}>
-          <button onClick={() => navigate("/add")}>+ Add Subscription</button>
-          <button onClick={handleLogout}>Logout</button>
+    <div className="dashboard-container">
+      {/* Navbar */}
+      <nav className="navbar">
+        <h1 className="logo">TrackStack</h1>
+        <div className="nav-actions" style={{ display: "flex", gap: "10px" }}>
+          <button onClick={() => navigate("/add")} className="btn">
+            + Add Subscription
+          </button>
+          <button onClick={() => navigate("/profile")} className="btn">
+            Profile
+          </button>
+          <button onClick={() => navigate("/settings")} className="btn">
+            Settings
+          </button>
+          <button onClick={handleLogout} className="btn logout">
+            Logout
+          </button>
         </div>
+      </nav>
+
+      {/* Search Bar */}
+      <div className="search-bar">
+        <input
+          type="text"
+          placeholder="Search subscriptions..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
       </div>
 
+      {/* Upcoming Renewals (minimal clickable cards without renew date) */}
       <section>
-        <h2>Upcoming Renewals (7 days)</h2>
+        <h2>Upcoming Renewals ({reminderDays} days)</h2>
         {upcoming.length === 0 && <p>None soon.</p>}
-        {upcoming.map((s) => (
-          <div key={s.id}>
-            <strong>{s.name}</strong> -{" "}
-            {s.renewDate?.toDate().toLocaleDateString()} - ₹{s.cost}
-          </div>
-        ))}
+        <div className="cards-grid">
+          {upcoming.map((s) => (
+            <div
+              key={s.id}
+              className="subscription-card clickable"
+              role="button"
+              tabIndex={0}
+              onClick={() => openDetail(s.id)}
+              onKeyDown={(e) => onCardKeyDown(e, s.id)}
+              title="View details"
+            >
+              <strong className="card-title">{s.name}</strong>
+            </div>
+          ))}
+        </div>
       </section>
 
+      {/* All Subscriptions (minimal clickable cards without renew date) */}
       <section>
         <h2>All Subscriptions</h2>
-        {subscriptions.length === 0 && <p>You have no subscriptions yet.</p>}
-        {subscriptions.map((s) => (
-          <div
-            key={s.id}
-            style={{
-              border: "1px solid #ddd",
-              padding: 8,
-              marginBottom: 6,
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <div>
-              <div>{s.name}</div>
-              <div>Renew: {s.renewDate?.toDate().toLocaleDateString()}</div>
-              <div>Cost: ₹{s.cost}</div>
-            </div>
-            <div style={{ display: "flex", gap: 8 }}>
-              <Link to={`/edit/${s.id}`}>
-                <button>Edit</button>
-              </Link>
-              <button onClick={() => handleDelete(s.id)}>Delete</button>
-            </div>
+        {filteredSubs.length === 0 ? (
+          <div className="empty-state">
+            <p>No subscriptions found. Add your first one!</p>
           </div>
-        ))}
+        ) : (
+          <div className="cards-grid">
+            {filteredSubs.map((s) => (
+              <div
+                key={s.id}
+                className="subscription-card clickable"
+                role="button"
+                tabIndex={0}
+                onClick={() => openDetail(s.id)}
+                onKeyDown={(e) => onCardKeyDown(e, s.id)}
+                title="View details"
+              >
+                <strong className="card-title">{s.name}</strong>
+              </div>
+            ))}
+          </div>
+        )}
       </section>
+
+      {/* Footer */}
+      <footer className="footer">
+        <p>© {new Date().getFullYear()} TrackStack – Sweta</p>
+        <p>Made with ❤ by Sweta</p>
+        <div className="social-icons">
+          <a href="https://github.com" target="_blank" rel="noreferrer">
+            <FaGithub />
+          </a>
+          <a href="https://linkedin.com" target="_blank" rel="noreferrer">
+            <FaLinkedin />
+          </a>
+          <a href="https://twitter.com" target="_blank" rel="noreferrer">
+            <FaTwitter />
+          </a>
+        </div>
+      </footer>
     </div>
   );
 }

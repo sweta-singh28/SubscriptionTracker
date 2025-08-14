@@ -1,5 +1,5 @@
 /* Full screen and center alignment */
-.login-container {
+.register-container {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -7,14 +7,14 @@
   width: 100vw;
   background: linear-gradient(135deg, #6a85b6, #bac8e0);
   background-size: 300% 300%;
-  animation: gradientShift 12s ease-in-out infinite, fadeInBg 1.2s ease-in-out;
+  animation: gradientShiftFast 6s ease-in-out infinite, fadeInBg 1.2s ease-in-out;
   overflow: hidden;
   position: relative;
 }
 
 /* Floating circles animation background */
-.login-container::before,
-.login-container::after {
+.register-container::before,
+.register-container::after {
   content: "";
   position: absolute;
   width: 200%;
@@ -26,13 +26,30 @@
   z-index: 0;
 }
 
-.login-container::after {
+.register-container::after {
   animation-direction: reverse;
   opacity: 0.6;
 }
 
+/* Wave overlay */
+.register-container .wave-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    rgba(255, 255, 255, 0.05) 0%, 
+    rgba(255, 255, 255, 0.1) 50%, 
+    rgba(255, 255, 255, 0.05) 100%
+  );
+  animation: softWave 5s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+
 /* Form styling */
-.login-form {
+.register-form {
   background: rgba(255, 255, 255, 0.96);
   padding: 35px;
   border-radius: 14px;
@@ -53,21 +70,21 @@
   margin-bottom: 10px;
 }
 
-/* Login title */
-.login-title {
+/* Register title */
+.register-title {
   font-size: 20px;
   margin-bottom: 20px;
   color: #333;
 }
 
 /* Inputs & buttons */
-.login-form input,
-.login-form button {
+.register-form input,
+.register-form button {
   width: 100%;
   box-sizing: border-box;
 }
 
-.login-form input {
+.register-form input {
   padding: 12px;
   margin: 8px 0;
   border: 1px solid #2c2828ff;
@@ -78,13 +95,13 @@
   transition: all 0.3s ease;
 }
 
-.login-form input:focus {
+.register-form input:focus {
   border-color: #9a8c98;
   box-shadow: 0 0 8px rgba(154, 140, 152, 0.5);
   transform: scale(1.03);
 }
 
-.login-form button {
+.register-form button {
   padding: 12px;
   background: linear-gradient(90deg, #6a85b6, #bac8e0);
   color: white;
@@ -96,9 +113,16 @@
   transition: all 0.3s ease;
 }
 
-.login-form button:hover {
+.register-form button:hover {
   transform: scale(1.07);
   box-shadow: 0 0 12px rgba(106, 133, 182, 0.7);
+}
+
+/* Error text */
+.error-text {
+  color: red;
+  font-size: 14px;
+  margin-bottom: 10px;
 }
 
 /* Register text */
@@ -118,73 +142,6 @@
   text-decoration: underline;
 }
 
-/* Animations */
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(30px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes fadeInBg {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes gradientShift {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-@keyframes floatEffect {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-6px); }
-}
-
-@keyframes rotateBg {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-/* Faster but smooth gradient animation */
-@keyframes gradientShiftFast {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-/* Gentle vertical wave shimmer */
-@keyframes softWave {
-  0% { transform: translateY(0); }
-  50% { transform: translateY(-8px); }
-  100% { transform: translateY(0); }
-}
-
-/* Apply the subtle fast gradient */
-.login-container {
-  background: linear-gradient(135deg, #6a85b6, #bac8e0);
-  background-size: 300% 300%;
-  animation: gradientShiftFast 6s ease-in-out infinite, fadeInBg 1.2s ease-in-out;
-  position: relative;
-  overflow: hidden;
-}
-
-/* Light wave overlay */
-.login-container::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(
-    rgba(255, 255, 255, 0.05) 0%, 
-    rgba(255, 255, 255, 0.1) 50%, 
-    rgba(255, 255, 255, 0.05) 100%
-  );
-  animation: softWave 5s ease-in-out infinite;
-  pointer-events: none;
-}
-
-
 /* Dark/Light toggle button */
 .dark-light-toggle {
   position: absolute;
@@ -203,32 +160,32 @@
 
 /* Dark mode styles */
 body.dark-mode,
-.login-container.dark-mode {
+.register-container.dark-mode {
   background: linear-gradient(135deg, #1f1f1f, #3b3b3b);
 }
 
-body.dark-mode .login-form,
-.login-container.dark-mode .login-form {
+body.dark-mode .register-form,
+.register-container.dark-mode .register-form {
   background: rgba(30, 30, 30, 0.95);
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
 }
 
-body.dark-mode .login-form input {
+body.dark-mode .register-form input {
   background: #2b2b2b;
   border: 1px solid #555;
   color: #eee;
 }
 
-body.dark-mode .login-form input:focus {
+body.dark-mode .register-form input:focus {
   border-color: #9a8c98;
   box-shadow: 0 0 8px rgba(154, 140, 152, 0.5);
 }
 
-body.dark-mode .login-form button {
+body.dark-mode .register-form button {
   background: linear-gradient(90deg, #444, #777);
 }
 
-body.dark-mode .login-form button:hover {
+body.dark-mode .register-form button:hover {
   box-shadow: 0 0 12px rgba(255, 255, 255, 0.3);
 }
 
@@ -238,7 +195,7 @@ body.dark-mode .project-name {
   -webkit-text-fill-color: transparent;
 }
 
-body.dark-mode .login-title,
+body.dark-mode .register-title,
 body.dark-mode .register-text,
 body.dark-mode .register-text a {
   color: #ddd;
@@ -248,12 +205,45 @@ body.dark-mode .register-text a {
   color: #aaa;
 }
 
+/* Animations */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInBg {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes gradientShiftFast {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes floatEffect {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+@keyframes softWave {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+  100% { transform: translateY(0); }
+}
+
+@keyframes rotateBg {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
 
 /* Responsive Layout Enhancements */
 
 /* Tablets and small laptops */
 @media (max-width: 1024px) {
-  .login-form {
+  .register-form {
     width: 60%;
     padding: 30px;
   }
@@ -261,11 +251,11 @@ body.dark-mode .register-text a {
 
 /* Large mobile devices */
 @media (max-width: 768px) {
-  .login-container {
+  .register-container {
     padding: 20px;
   }
 
-  .login-form {
+  .register-form {
     width: 90%;
     padding: 25px;
   }
@@ -274,12 +264,12 @@ body.dark-mode .register-text a {
     font-size: 24px;
   }
 
-  .login-title {
+  .register-title {
     font-size: 18px;
   }
 
-  .login-form input,
-  .login-form button {
+  .register-form input,
+  .register-form button {
     font-size: 14px;
     padding: 10px;
   }
@@ -293,12 +283,12 @@ body.dark-mode .register-text a {
 
 /* Small mobile devices */
 @media (max-width: 480px) {
-  .login-container {
+  .register-container {
     flex-direction: column;
     padding: 10px;
   }
 
-  .login-form {
+  .register-form {
     width: 100%;
     padding: 20px;
     border-radius: 10px;
@@ -308,17 +298,17 @@ body.dark-mode .register-text a {
     font-size: 20px;
   }
 
-  .login-title {
+  .register-title {
     font-size: 16px;
     margin-bottom: 15px;
   }
 
-  .login-form input {
+  .register-form input {
     font-size: 13px;
     padding: 9px;
   }
 
-  .login-form button {
+  .register-form button {
     font-size: 14px;
     padding: 9px;
   }
@@ -340,12 +330,12 @@ body.dark-mode .register-text a {
     font-size: 18px;
   }
 
-  .login-title {
+  .register-title {
     font-size: 14px;
   }
 
-  .login-form input,
-  .login-form button {
+  .register-form input,
+  .register-form button {
     font-size: 12px;
     padding: 8px;
   }
@@ -354,4 +344,3 @@ body.dark-mode .register-text a {
     font-size: 11px;
   }
 }
-
