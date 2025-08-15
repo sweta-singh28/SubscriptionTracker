@@ -19,7 +19,6 @@ export default function SubscriptionForm() {
   const [initializing, setInitializing] = useState(true);
   const [error, setError] = useState("");
 
-  // Load existing subscription if editing
   useEffect(() => {
     if (authLoading) return;
     if (!user) {
@@ -99,6 +98,22 @@ export default function SubscriptionForm() {
         gap: 12,
       }}
     >
+      {/* Back to Dashboard Button */}
+      <button
+        type="button"
+        onClick={() => navigate("/dashboard")}
+        style={{
+          padding: "8px 12px",
+          backgroundColor: "#2196f3",
+          color: "white",
+          border: "none",
+          borderRadius: "5px",
+          cursor: "pointer",
+        }}
+      >
+        ← Back to Dashboard
+      </button>
+
       <h2>{id ? "Edit" : "Add"} Subscription</h2>
       {error && <div style={{ color: "red" }}>{error}</div>}
 

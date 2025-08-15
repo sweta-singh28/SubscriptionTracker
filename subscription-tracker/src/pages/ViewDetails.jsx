@@ -19,7 +19,6 @@ export default function ViewDetails() {
 
         if (docSnap.exists()) {
           const data = docSnap.data();
-          // Convert Firestore Timestamp to a readable date string
           const renewDateString = data.renewDate
             ? data.renewDate.toDate().toLocaleDateString()
             : "Not specified";
@@ -27,7 +26,7 @@ export default function ViewDetails() {
           setSubscription({
             id: docSnap.id,
             ...data,
-            renewDate: renewDateString, // Store the formatted string
+            renewDate: renewDateString,
           });
         } else {
           setSubscription(null);
@@ -64,6 +63,22 @@ export default function ViewDetails() {
 
   return (
     <div style={{ padding: "20px", maxWidth: "500px", margin: "0 auto" }}>
+      {/* Back to Dashboard Button */}
+      <button
+        onClick={() => navigate("/dashboard")}
+        style={{
+          padding: "8px 12px",
+          backgroundColor: "#2196f3",
+          color: "white",
+          border: "none",
+          borderRadius: "5px",
+          cursor: "pointer",
+          marginBottom: "16px",
+        }}
+      >
+        ← Back to Dashboard
+      </button>
+
       <h2>{subscription.name}</h2>
       <p>
         <strong>Name:</strong> {subscription.name}

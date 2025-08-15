@@ -1,12 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { signOut } from "firebase/auth";
-import { auth } from "../firebase";
+import { auth, db } from "../firebase"; // db added
+import { doc, getDoc } from "firebase/firestore"; // Firestore imports
 import { useAuth } from "../context/AuthContext";
 
 export default function Profile() {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [nameFromDB, setNameFromDB] = useState(""); // New state for name
 
   // Theme
   const [theme, setTheme] = useState(() => {
@@ -18,10 +20,26 @@ export default function Profile() {
     document.documentElement.setAttribute("data-theme", theme);
   }, [theme]);
 
+  // Fetch name from Firestore
+  useEffect(() => {
+    if (user) {
+      const fetchName = async () => {
+        const docRef = doc(db, "users", user.uid);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          setNameFromDB(docSnap.data().name);
+        }
+      };
+      fetchName();
+    }
+  }, [user]);
+
   const displayName = useMemo(() => {
     if (!user) return "Guest";
-    return user.displayName || user.email?.split("@")[0] || "User";
-  }, [user]);
+    return (
+      nameFromDB || user.displayName || user.email?.split("@")[0] || "User"
+    );
+  }, [user, nameFromDB]);
 
   const avatarLetter = (displayName?.[0] || "U").toUpperCase();
   const email = user?.email || "Not logged in";
