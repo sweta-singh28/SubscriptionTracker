@@ -14,7 +14,6 @@ import {
   doc,
   getDoc,
   setDoc,
-  updateDoc,
   collection,
   query,
   where,
@@ -29,9 +28,7 @@ export default function Settings() {
   const navigate = useNavigate();
 
   const [newPassword, setNewPassword] = useState("");
-  const [needReauth, setNeedReauth] = useState(false);
   const [currentPassword, setCurrentPassword] = useState("");
-
   const [reminderDays, setReminderDays] = useState(7);
 
   const [deletingAll, setDeletingAll] = useState(false);
@@ -73,7 +70,6 @@ export default function Settings() {
 
   const savePrefs = async () => {
     try {
-      // FIX: Use setDoc with { merge: true } to create the document if it doesn't exist.
       await setDoc(
         doc(db, "users", user.uid),
         {
@@ -90,43 +86,29 @@ export default function Settings() {
 
   const handleChangePassword = async (e) => {
     e.preventDefault();
+    if (!currentPassword) {
+      alert("Please enter your current password.");
+      return;
+    }
     if (!newPassword || newPassword.length < 6) {
       alert("Please enter a new password (at least 6 characters).");
       return;
     }
-    try {
-      await updatePassword(auth.currentUser, newPassword);
-      setNewPassword("");
-      setNeedReauth(false);
-      setCurrentPassword("");
-      alert("Password updated!");
-    } catch (e) {
-      if (e.code === "auth/requires-recent-login") {
-        setNeedReauth(true);
-      } else {
-        console.error(e);
-        alert("Failed to update password: " + e.message);
-      }
-    }
-  };
 
-  const handleReauthAndChange = async (e) => {
-    e.preventDefault();
-    if (!currentPassword) {
-      alert("Please enter your current password to continue.");
-      return;
-    }
     try {
       const cred = EmailAuthProvider.credential(user.email, currentPassword);
       await reauthenticateWithCredential(auth.currentUser, cred);
       await updatePassword(auth.currentUser, newPassword);
       setNewPassword("");
-      setNeedReauth(false);
       setCurrentPassword("");
-      alert("Password updated!");
+      alert("Password updated successfully!");
     } catch (e) {
       console.error(e);
-      alert("Re-authentication failed: " + e.message);
+      if (e.code === "auth/wrong-password") {
+        alert("Current password is incorrect.");
+      } else {
+        alert("Failed to update password: " + e.message);
+      }
     }
   };
 
@@ -210,6 +192,15 @@ export default function Settings() {
       <div className="settings-card">
         <h2>Settings</h2>
 
+        {/* Back to Dashboard Button */}
+        <button
+          className="btn"
+          style={{ marginBottom: "16px" }}
+          onClick={() => navigate("/dashboard")}
+        >
+          ← Back to Dashboard
+        </button>
+
         {/* Account Info */}
         <section className="settings-section">
           <h3>Account</h3>
@@ -229,10 +220,18 @@ export default function Settings() {
         {/* Change Password */}
         <section className="settings-section">
           <h3>Change Password</h3>
-          <form
-            onSubmit={needReauth ? handleReauthAndChange : handleChangePassword}
-          >
+          <form onSubmit={handleChangePassword}>
             <div className="settings-row-cols">
+              <div className="flex-1">
+                <label className="settings-label">Current Password</label>
+                <input
+                  type="password"
+                  value={currentPassword}
+                  onChange={(e) => setCurrentPassword(e.target.value)}
+                  placeholder="Enter current password"
+                  required
+                />
+              </div>
               <div className="flex-1">
                 <label className="settings-label">New Password</label>
                 <input
@@ -244,31 +243,11 @@ export default function Settings() {
                   minLength={6}
                 />
               </div>
-
-              {needReauth && (
-                <div className="flex-1">
-                  <label className="settings-label">
-                    Current Password (required)
-                  </label>
-                  <input
-                    type="password"
-                    value={currentPassword}
-                    onChange={(e) => setCurrentPassword(e.target.value)}
-                    placeholder="Enter current password"
-                    required
-                  />
-                </div>
-              )}
             </div>
 
             <button type="submit" className="btn">
-              {needReauth ? "Confirm & Update" : "Update Password"}
+              Update Password
             </button>
-            {needReauth && (
-              <p className="settings-help">
-                For security, please confirm your current password to finish.
-              </p>
-            )}
           </form>
         </section>
 

@@ -173,13 +173,13 @@ export default function Dashboard() {
         <p>© {new Date().getFullYear()} TrackStack – Sweta</p>
         <p>Made with ❤ by Sweta</p>
         <div className="social-icons">
-          <a href="https://github.com" target="_blank" rel="noreferrer">
+          <a href="https://github.com/sweta-singh28" target="_blank" rel="noreferrer">
             <FaGithub />
           </a>
-          <a href="https://linkedin.com" target="_blank" rel="noreferrer">
+          <a href="https://www.linkedin.com/in/sweta-singh-991a35256/" target="_blank" rel="noreferrer">
             <FaLinkedin />
           </a>
-          <a href="https://twitter.com" target="_blank" rel="noreferrer">
+          <a href="https://x.com/SwetaSi53713188" target="_blank" rel="noreferrer">
             <FaTwitter />
           </a>
         </div>
