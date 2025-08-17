@@ -15,6 +15,7 @@ export default function SubscriptionForm() {
   const [name, setName] = useState("");
   const [cost, setCost] = useState("");
   const [renewDate, setRenewDate] = useState("");
+  const [category, setCategory] = useState(""); // new state for category
   const [submitting, setSubmitting] = useState(false);
   const [initializing, setInitializing] = useState(true);
   const [error, setError] = useState("");
@@ -43,6 +44,7 @@ export default function SubscriptionForm() {
         if (existing.renewDate?.toDate) {
           setRenewDate(existing.renewDate.toDate().toISOString().slice(0, 10));
         }
+        setCategory(existing.category || ""); // load existing category if editing
       } catch (e) {
         console.error(e);
         setError("Failed to load subscription.");
@@ -58,6 +60,7 @@ export default function SubscriptionForm() {
       return "Cost must be a non-negative number.";
     if (!renewDate) return "Renewal date is required.";
     if (isNaN(new Date(renewDate).getTime())) return "Invalid date.";
+    if (!category) return "Please select a subscription category.";
     return null;
   };
 
@@ -72,9 +75,9 @@ export default function SubscriptionForm() {
     setSubmitting(true);
     try {
       if (id) {
-        await updateSubscription(id, { name, cost, renewDate });
+        await updateSubscription(id, { name, cost, renewDate, category });
       } else {
-        await addSubscription({ name, cost, renewDate });
+        await addSubscription({ name, cost, renewDate, category });
       }
       navigate("/dashboard");
     } catch (err) {
@@ -149,6 +152,25 @@ export default function SubscriptionForm() {
           required
           disabled={submitting}
         />
+      </label>
+
+      <label>
+        Subscription Category
+        <select
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+          required
+          disabled={submitting}
+        >
+          <option value="">-- Select Category --</option>
+          <option value="music">Music</option>
+          <option value="entertainment">Entertainment</option>
+          <option value="education">Education</option>
+          <option value="fitness">Fitness</option>
+          <option value="productivity">Productivity</option>
+          <option value="gaming">Gaming</option>
+          <option value="cloud_storage">Cloud Storage</option>
+        </select>
       </label>
 
       <div style={{ display: "flex", gap: 8 }}>
