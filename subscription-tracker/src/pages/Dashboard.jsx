@@ -109,6 +109,46 @@ export default function Dashboard() {
     }
   };
 
+  // ===== Added: Group by Category (no other logic changed) =====
+  const CATEGORY_ORDER = [
+    "music",
+    "entertainment",
+    "education",
+    "fitness",
+    "productivity",
+    "gaming",
+    "cloud_storage",
+  ];
+  const CATEGORY_LABELS = {
+    music: "Music",
+    entertainment: "Entertainment",
+    education: "Education",
+    fitness: "Fitness",
+    productivity: "Productivity",
+    gaming: "Gaming",
+    cloud_storage: "Cloud Storage",
+  };
+  const titleCase = (str) =>
+    (str || "")
+      .toString()
+      .replace(/[_-]+/g, " ")
+      .replace(/\w\S*/g, (w) => w.charAt(0).toUpperCase() + w.slice(1));
+
+  const groupedByCategory = filteredSubs.reduce((acc, s) => {
+    const key =
+      (typeof s.category === "string" && s.category.trim()) || "other";
+    if (!acc[key]) acc[key] = [];
+    acc[key].push(s);
+    return acc;
+  }, {});
+  const orderedCategoryKeys = [
+    ...CATEGORY_ORDER.filter((k) => groupedByCategory[k]?.length),
+    ...Object.keys(groupedByCategory)
+      .filter((k) => !CATEGORY_ORDER.includes(k))
+      .sort(),
+  ];
+  // ============================================================
+
   return (
     <div className={`dashboard-page ${theme}`}>
       <div className="dashboard-container">
@@ -195,7 +235,7 @@ export default function Dashboard() {
           </div>
         </section>
 
-        {/* All Subscriptions */}
+        {/* All Subscriptions — grouped by Category */}
         <section>
           <h2>All Subscriptions</h2>
           {filteredSubs.length === 0 ? (
@@ -203,21 +243,28 @@ export default function Dashboard() {
               <p>No subscriptions found. Add your first one!</p>
             </div>
           ) : (
-            <div className="cards-grid">
-              {filteredSubs.map((s) => (
-                <div
-                  key={s.id}
-                  className="subscription-card clickable"
-                  role="button"
-                  tabIndex={0}
-                  onClick={() => openDetail(s.id)}
-                  onKeyDown={(e) => onCardKeyDown(e, s.id)}
-                  title="View details"
-                >
-                  <strong className="card-title">{s.name}</strong>
+            orderedCategoryKeys.map((catKey) => (
+              <div key={catKey} className="category-block">
+                <h3 className="category-title">
+                  {CATEGORY_LABELS[catKey] || titleCase(catKey)}
+                </h3>
+                <div className="cards-grid">
+                  {groupedByCategory[catKey].map((s) => (
+                    <div
+                      key={s.id}
+                      className="subscription-card clickable"
+                      role="button"
+                      tabIndex={0}
+                      onClick={() => openDetail(s.id)}
+                      onKeyDown={(e) => onCardKeyDown(e, s.id)}
+                      title="View details"
+                    >
+                      <strong className="card-title">{s.name}</strong>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
+              </div>
+            ))
           )}
         </section>
 

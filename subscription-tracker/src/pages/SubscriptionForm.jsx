@@ -6,6 +6,7 @@ import {
   getUserSubscriptions,
 } from "../utils/subscriptionService";
 import { useAuth } from "../context/AuthContext";
+import "../css/subscriptionForm.css";
 
 export default function SubscriptionForm() {
   const { id } = useParams(); // undefined for add
