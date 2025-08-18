@@ -19,10 +19,14 @@ const subsCollection = collection(db, "subscriptions");
 // Add new subscription
 export const addSubscription = async ({ name, cost, renewDate }) => {
   if (!auth.currentUser) throw new Error("Not authenticated");
+
+  // renewDate comes from the form; store it as a Firestore Timestamp
+  const dateObj = new Date(renewDate);
+
   return await addDoc(subsCollection, {
     name,
     cost: Number(cost),
-    renewDate: Timestamp.fromDate(new Date(renewDate)),
+    renewDate: Timestamp.fromDate(dateObj), // ✅ server uses renewDate
     userId: auth.currentUser.uid,
     createdAt: Timestamp.now(),
   });
@@ -49,12 +53,15 @@ export const subscribeToUserSubscriptions = (userId, callback) => {
 export const updateSubscription = async (id, updates) => {
   const ref = doc(db, "subscriptions", id);
   const payload = { ...updates };
+
   if (updates.renewDate) {
-    payload.renewDate = Timestamp.fromDate(new Date(updates.renewDate));
+    const dateObj = new Date(updates.renewDate);
+    payload.renewDate = Timestamp.fromDate(dateObj); // ✅ keep full date
   }
   if (updates.cost !== undefined) {
     payload.cost = Number(updates.cost);
   }
+
   await updateDoc(ref, payload);
 };
 
