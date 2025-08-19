@@ -1,175 +1,175 @@
-/* Fullscreen background with animated gradient */
-.profile-page {
-  min-height: 100vh;
-  width: 100vw;
+/* Same background as login */
+.profile-container {
   display: flex;
-  align-items: center;
   justify-content: center;
-  padding: 24px;
-  font-family: 'Poppins', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-  position: relative;
-  overflow: hidden;
+  align-items: center;
+  height: 100vh;
+  width: 100vw;
   background: linear-gradient(135deg, #6a85b6, #bac8e0);
   background-size: 300% 300%;
   animation: gradientShiftFast 7s ease-in-out infinite, fadeInBg 1.2s ease-in-out;
-  transition: background 0.6s ease-in-out;
+  overflow: hidden;
+  position: relative;
 }
 
-/* Light shimmer overlay */
-.profile-page::after {
+/* Floating background overlay */
+.profile-container::before,
+.profile-container::after {
   content: "";
   position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    rgba(255, 255, 255, 0.05) 0%, 
-    rgba(255, 255, 255, 0.12) 50%, 
-    rgba(255, 255, 255, 0.05) 100%
-  );
-  animation: softWave 6s ease-in-out infinite;
-  pointer-events: none;
+  width: 200%;
+  height: 200%;
+  top: -50%;
+  left: -50%;
+  background: radial-gradient(circle, rgba(255,255,255,0.1) 20%, transparent 70%);
+  animation: rotateBg 40s linear infinite;
   z-index: 0;
 }
 
-/* Dark Mode */
-.profile-page.dark {
-  background: linear-gradient(135deg, #1f1f1f, #3b3b3b);
+.profile-container::after {
+  animation-direction: reverse;
+  opacity: 0.6;
 }
 
 /* Profile Card */
 .profile-card {
-  position: relative;
-  width: 100%;
-  max-width: 560px;
-  border-radius: 20px;
-  padding: 32px 28px;
-  backdrop-filter: blur(14px);
-  z-index: 1;
-  animation: fadeUp 0.9s ease-out, floatEffect 5s ease-in-out infinite;
-}
-
-.profile-page.light .profile-card {
-  background: rgba(255, 255, 255, 0.95);
-  border: 1px solid #dbeafe;
-  box-shadow: 0 18px 55px rgba(59, 130, 246, 0.25);
-}
-
-.profile-page.dark .profile-card {
-  background: rgba(30, 30, 30, 0.92);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 18px 55px rgba(0, 0, 0, 0.5);
-}
-
-/* Title */
-.profile-title {
-  margin: 0 0 18px;
-  font-size: 28px;
-  font-weight: 800;
+  background: rgba(255, 255, 255, 0.96);
+  padding: 35px;
+  border-radius: 14px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+  width: 380px;
   text-align: center;
-  animation: popIn 0.7s ease-out;
-  letter-spacing: 0.6px;
+  animation: fadeInUp 0.9s ease-in-out, floatEffect 4s ease-in-out infinite;
+  z-index: 1;
 }
-.profile-page.light .profile-title { color: #0f172a; }
-.profile-page.dark .profile-title { color: #f9fafb; }
+
+/* .project-name {
+  font-size: 26px;
+  font-weight: bold;
+  background: linear-gradient(90deg, #0d27d5ff, #9a8c98);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 8px;
+} */
+
+.profile-title {
+  font-size: 20px;
+  margin-bottom: 20px;
+  color: #333;
+}
 
 /* Avatar */
 .avatar-wrap {
   display: flex;
   justify-content: center;
-  margin: 12px 0 26px;
+  margin-bottom: 20px;
 }
-.avatar {
-  width: 90px;
-  height: 90px;
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
-  font-size: 38px;
-  font-weight: 800;
-  animation: float 3s ease-in-out infinite;
-}
-.profile-page.light .avatar {
-  background: linear-gradient(180deg, #3b82f6, #8b5cf6, #ec4899);
-  color: #fff;
-  box-shadow: 0 12px 35px rgba(59, 130, 246, 0.4);
-}
-.profile-page.dark .avatar {
-  background: linear-gradient(180deg, #38bdf8, #a855f7, #f472b6);
-  color: #0f172a;
-  box-shadow: 0 12px 35px rgba(168, 85, 247, 0.45);
+.avatar-icon {
+  font-size: 70px;
+  color: #6a85b6;
+  animation: floatEffect 3s ease-in-out infinite;
 }
 
 /* Info rows */
 .info-row {
-  display: grid;
-  grid-template-columns: 140px 1fr;
-  gap: 12px;
-  margin-bottom: 14px;
+  display: flex;
+  justify-content: space-between;
+  margin: 10px 0;
+  font-size: 15px;
 }
 .label {
-  font-size: 14px;
   font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.4px;
+  color: #444;
 }
-.profile-page.light .label { color: #475569; }
-.profile-page.dark .label { color: #cbd5e1; }
 .value {
-  font-size: 15px;
-  font-weight: 600;
-  word-break: break-word;
+  font-weight: 500;
+  color: #222;
 }
-.profile-page.light .value { color: #0f172a; }
-.profile-page.dark .value { color: #f1f5f9; }
 
-/* Icon Buttons (Theme, Dashboard, Logout) */
+/* Actions (icon-only now) */
 .actions {
   display: flex;
-  justify-content: space-around;
-  margin-top: 26px;
+  justify-content: center;
+  gap: 40px;
+  margin-top: 25px;
 }
-.icon-btn {
-  font-size: 28px;
-  border: none;
-  background: none;
+
+.action-icon {
+  font-size: 32px; /* reduced from 42px */
   cursor: pointer;
-  transition: transform 0.25s ease, color 0.3s ease;
+  transition: transform 0.25s ease, color 0.25s ease;
 }
-.icon-btn:hover {
+
+/* Dashboard icon */
+.dashboard-icon {
+  color: #6a85b6; /* bluish theme */
+}
+.dashboard-icon:hover {
+  transform: scale(1.2);
+  color: #4f6bb2;
+}
+
+/* Logout icon (red like screenshot) */
+.logout-icon {
+  color: #e63946;
+}
+.logout-icon:hover {
+  transform: scale(1.2);
+  color: #b71c1c;
+}
+
+/* Dark/Light toggle */
+.dark-light-toggle {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  font-size: 22px;
+  color: #fff;
+  cursor: pointer;
+  z-index: 10;
+  transition: all 0.3s ease;
+}
+.dark-light-toggle:hover {
   transform: scale(1.2);
 }
-.profile-page.light .icon-btn.theme { color: #f59e0b; }   /* Sun */
-.profile-page.dark .icon-btn.theme { color: #38bdf8; }   /* Moon */
-.icon-btn.dashboard { color: #3b82f6; }
-.icon-btn.logout { color: #ef4444; }
+
+/* Dark mode */
+body.dark-mode,
+.profile-container.dark-mode {
+  background: linear-gradient(135deg, #1f1f1f, #3b3b3b);
+}
+body.dark-mode .profile-card {
+  background: rgba(30, 30, 30, 0.95);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
+}
+body.dark-mode .profile-title,
+body.dark-mode .label,
+body.dark-mode .value {
+  color: #ddd;
+}
+body.dark-mode .avatar-icon {
+  color: #aaa;
+}
 
 /* Animations */
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(20px) scale(0.95); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
 }
-@keyframes popIn {
-  0% { transform: scale(0.8); opacity: 0; }
-  100% { transform: scale(1); opacity: 1; }
-}
-@keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
-}
-@keyframes floatEffect {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-6px); }
+@keyframes fadeInBg {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 @keyframes gradientShiftFast {
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
 }
-@keyframes fadeInBg {
-  from { opacity: 0; }
-  to { opacity: 1; }
+@keyframes floatEffect {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
 }
-@keyframes softWave {
-  0% { transform: translateY(0); }
-  50% { transform: translateY(-8px); }
-  100% { transform: translateY(0); }
+@keyframes rotateBg {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }

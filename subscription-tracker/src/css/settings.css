@@ -1,0 +1,156 @@
+/* === Settings Page Background (same as login) === */
+.settings-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  width: 100%;
+  background: linear-gradient(135deg, #6a85b6, #bac8e0);
+  background-size: 300% 300%;
+  animation: gradientShiftFast 7s ease-in-out infinite, fadeInBg 1.2s ease-in-out;
+  padding: 20px;
+}
+
+@keyframes gradientShiftFast {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes fadeInBg {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* === Card Container (glass effect like login) === */
+.settings-card {
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(15px);
+  border-radius: 20px;
+  padding: 30px;
+  width: 100%;
+  max-width: 650px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.35);
+  color: #fff;
+  animation: fadeUp 1s ease-in-out;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(25px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* === Headings === */
+.settings-card h2 {
+  font-size: 2rem;
+  margin-bottom: 22px;
+  text-align: center;
+  font-weight: 600;
+  color: #fff;
+}
+
+.settings-section h3 {
+  font-size: 1.2rem;
+  margin-bottom: 12px;
+  border-left: 4px solid #6c63ff;
+  padding-left: 10px;
+  font-weight: 500;
+  color: #f0f0f0;
+}
+
+.settings-section-danger h3 {
+  border-left: 4px solid #ff4b5c;
+}
+
+/* === Labels & Inputs === */
+.settings-label {
+  font-size: 0.95rem;
+  color: #e0e0e0;
+  margin-bottom: 6px;
+  display: block;
+}
+
+.settings-card input,
+.settings-card select {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: none;
+  outline: none;
+  background: rgba(255, 255, 255, 0.18);
+  color: #fff;
+  font-size: 1rem;
+  margin-bottom: 16px;
+  transition: all 0.3s ease;
+}
+
+.settings-card input:focus,
+.settings-card select:focus {
+  background: rgba(255, 255, 255, 0.28);
+  transform: scale(1.02);
+}
+
+/* === Layout Helpers === */
+.settings-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.settings-row-cols {
+  display: flex;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.flex-1 { flex: 1; }
+
+.settings-help {
+  font-size: 0.85rem;
+  color: #ddd;
+  margin-bottom: 10px;
+}
+
+.margin-top-16 { margin-top: 16px; }
+
+/* === Buttons (styled like login) === */
+.settings-btn {
+  background: linear-gradient(135deg, #6c63ff, #4a47a3);
+  border: none;
+  color: #fff;
+  padding: 12px 20px;
+  border-radius: 14px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  width: fit-content;
+}
+
+.settings-btn:hover {
+  background: linear-gradient(135deg, #5a52e0, #3b3a82);
+  transform: translateY(-2px);
+}
+
+/* === Warning Button === */
+.settings-btn-warn {
+  background: linear-gradient(135deg, #ff9800, #e65100);
+}
+
+.settings-btn-warn:hover {
+  background: linear-gradient(135deg, #fb8c00, #bf360c);
+}
+
+/* === Danger Button === */
+.settings-btn-danger {
+  background: linear-gradient(135deg, #ff4b5c, #b71c1c);
+  font-weight: 600;
+  margin-top: 16px;
+}
+
+.settings-btn-danger:hover {
+  background: linear-gradient(135deg, #e53935, #8e0000);
+  transform: scale(1.05);
+}

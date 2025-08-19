@@ -1,15 +1,16 @@
-// ViewDetails.jsx
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { doc, getDoc, deleteDoc } from "firebase/firestore";
 import { db } from "../firebase";
-import { FaTrash, FaEdit } from "react-icons/fa";
+import { FaTrash, FaEdit, FaArrowLeft, FaSun, FaMoon } from "react-icons/fa";
+import "../css/viewDetails.css";
 
 export default function ViewDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [subscription, setSubscription] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [darkMode, setDarkMode] = useState(false);
 
   useEffect(() => {
     async function fetchSubscription() {
@@ -38,7 +39,6 @@ export default function ViewDetails() {
         setLoading(false);
       }
     }
-
     fetchSubscription();
   }, [id]);
 
@@ -54,68 +54,53 @@ export default function ViewDetails() {
     }
   };
 
-  const handleEdit = () => {
-    navigate(`/edit/${id}`);
+  const toggleDarkMode = () => {
+    setDarkMode(!darkMode);
+    document.body.classList.toggle("dark-mode", !darkMode);
   };
 
   if (loading) return <p>Loading...</p>;
   if (!subscription) return <p>Subscription not found.</p>;
 
   return (
-    <div style={{ padding: "20px", maxWidth: "500px", margin: "0 auto" }}>
-      {/* Back to Dashboard Button */}
-      <button
-        onClick={() => navigate("/dashboard")}
-        style={{
-          padding: "8px 12px",
-          backgroundColor: "#2196f3",
-          color: "white",
-          border: "none",
-          borderRadius: "5px",
-          cursor: "pointer",
-          marginBottom: "16px",
-        }}
-      >
-        ← Back to Dashboard
-      </button>
+    <div className={`view-container ${darkMode ? "dark-mode" : ""}`}>
+      {/* Dark/Light toggle */}
+      <div className="dark-light-toggle" onClick={toggleDarkMode}>
+        {darkMode ? <FaSun /> : <FaMoon />}
+      </div>
 
-      <h2>{subscription.name}</h2>
-      <p>
-        <strong>Name:</strong> {subscription.name}
-      </p>
-      <p>
-        <strong>Cost:</strong> {subscription.cost}
-      </p>
-      <p>
-        <strong>Renewal Date:</strong> {subscription.renewDate}
-      </p>
-      <div style={{ display: "flex", gap: "10px", marginTop: "20px" }}>
-        <button
-          onClick={handleEdit}
-          style={{
-            padding: "8px 12px",
-            backgroundColor: "#4caf50",
-            color: "white",
-            border: "none",
-            borderRadius: "5px",
-            cursor: "pointer",
-          }}
-        >
-          <FaEdit /> Edit
-        </button>
-        <button
-          onClick={handleDelete}
-          style={{
-            padding: "8px 12px",
-            backgroundColor: "#f44336",
-            color: "white",
-            border: "none",
-            borderRadius: "5px",
-            cursor: "pointer",
-          }}
-        >
-          <FaTrash /> Delete
-        </button>
+      <div className="view-card">
+        <FaArrowLeft
+          className="icon-btn back-icon"
+          onClick={() => navigate("/dashboard")}
+          title="Back to Dashboard"
+        />
+
+        
+        <h2 className="view-title">Subscription Details</h2>
+
+        <p>
+          <strong>Name:</strong> {subscription.name}
+        </p>
+        <p>
+          <strong>Cost:</strong> {subscription.cost}
+        </p>
+        <p>
+          <strong>Renewal Date:</strong> {subscription.renewDate}
+        </p>
+
+        <div className="icon-group">
+          <FaEdit
+            className="icon-btn edit-icon"
+            onClick={() => navigate(`/edit/${id}`)}
+            title="Edit Subscription"
+          />
+          <FaTrash
+            className="icon-btn delete-icon"
+            onClick={handleDelete}
+            title="Delete Subscription"
+          />
+        </div>
       </div>
     </div>
   );

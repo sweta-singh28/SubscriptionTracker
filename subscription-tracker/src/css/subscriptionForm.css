@@ -1,113 +1,181 @@
-/* Container */
-form {
-  max-width: 420px;
-  margin: 40px auto;
-  padding: 24px;
-  background: #1e1e2f;
-  border-radius: 12px;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
-  font-family: "Poppins", sans-serif;
-  color: #f1f1f1;
+.subscription-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100vw;
+  background: linear-gradient(135deg, #6a85b6, #bac8e0);
+  background-size: 300% 300%;
+  animation: gradientShift 10s ease-in-out infinite, fadeInBg 1.2s ease-in-out;
+  position: relative;
+  overflow: hidden;
 }
 
-/* Heading */
-form h2 {
-  margin-bottom: 16px;
+.subscription-card {
+  background: rgba(255, 255, 255, 0.96);
+  padding: 35px 30px;
+  border-radius: 14px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+  width: 380px;
   text-align: center;
-  font-size: 1.6rem;
-  font-weight: 600;
-  color: #ffffff;
-}
-
-/* Error Message */
-form div[style*="color: red"] {
-  background: #ff4d4d;
-  color: white !important;
-  padding: 8px 12px;
-  border-radius: 6px;
-  margin-bottom: 12px;
-  font-size: 0.9rem;
-  text-align: center;
-}
-
-/* Labels */
-form label {
+  animation: fadeInUp 0.9s ease-in-out, floatEffect 4s ease-in-out infinite;
+  position: relative;
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  font-size: 0.95rem;
-  margin-bottom: 14px;
-  font-weight: 500;
+  gap: 20px;
 }
 
-/* Inputs & Selects */
-form input,
-form select {
-  padding: 10px 12px;
-  border: 1px solid #444;
+.subscription-title {
+  font-size: 22px;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.subscription-card label {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  /* Increased font size for labels */
+  font-size: 17px;
+  color: #444;
+  margin-bottom: 0px;
+}
+
+.subscription-card input,
+.subscription-card select {
+  /* Increased padding and font size for input fields */
+  padding: 12px 15px;
+  margin-top: 6px;
   border-radius: 8px;
-  background: #2b2b3c;
-  color: #f1f1f1;
-  font-size: 0.95rem;
-  outline: none;
-  transition: border 0.2s, background 0.2s;
-}
-
-form input:focus,
-form select:focus {
-  border-color: #2196f3;
-  background: #333344;
-}
-
-/* Buttons */
-form button {
-  flex: 1;
-  padding: 10px 14px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 0.95rem;
-  font-weight: 500;
-  transition: background 0.2s, transform 0.1s;
-}
-
-/* Back Button */
-form button[type="button"]:first-child {
-  margin-bottom: 14px;
+  border: 1px solid #ccc;
+  font-size: 16px;
   width: 100%;
-  background: #2196f3;
+  box-sizing: border-box;
+}
+
+.subscription-card input:disabled,
+.subscription-card select:disabled {
+  background: #f0f0f0;
+}
+
+.dark-light-toggle {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  font-size: 22px;
   color: #fff;
+  cursor: pointer;
+  z-index: 10;
+  transition: all 0.3s ease;
 }
 
-form button[type="button"]:first-child:hover {
-  background: #1976d2;
-  transform: translateY(-1px);
+.dark-light-toggle:hover {
+  transform: scale(1.2);
 }
 
-/* Submit Button */
-form button[type="submit"] {
-  background: #4caf50;
-  color: white;
+.icon-btn {
+  /* Increased icon size */
+  font-size: 32px;
+  cursor: pointer;
+  transition: transform 0.2s, color 0.3s;
 }
 
-form button[type="submit"]:hover {
-  background: #388e3c;
-  transform: translateY(-1px);
+.icon-btn:hover {
+  transform: scale(1.2);
 }
 
-/* Cancel Button */
-form button[type="button"]:last-child {
-  background: #f44336;
-  color: white;
+.back-icon {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  color: #2196f3;
 }
 
-form button[type="button"]:last-child:hover {
-  background: #d32f2f;
-  transform: translateY(-1px);
+.back-icon:hover {
+  color: #1976d2;
 }
 
-/* Disabled State */
-form button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+.submit-icon {
+  color: #4caf50;
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+.cancel-icon {
+  color: #f44336;
+}
+
+.form-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin-top: 10px;
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInBg {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes floatEffect {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+/* Dark Mode */
+body.dark-mode,
+.subscription-container.dark-mode {
+  background: linear-gradient(135deg, #1f1f1f, #3b3b3b);
+}
+
+body.dark-mode .subscription-card,
+.subscription-container.dark-mode .subscription-card {
+  background: rgba(30, 30, 30, 0.95);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
+}
+
+body.dark-mode .subscription-card label,
+body.dark-mode .subscription-card input,
+body.dark-mode .subscription-card select {
+  color: #ddd;
+  background: #333;
+  border: 1px solid #555;
+}
+
+body.dark-mode .subscription-title {
+  color: #ddd;
 }
