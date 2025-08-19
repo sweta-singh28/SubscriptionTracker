@@ -17,12 +17,13 @@ import { auth } from "../firebase";
 const subsCollection = collection(db, "subscriptions");
 
 // Add new subscription (always monthly)
-export const addSubscription = async ({ name, cost, renewDate }) => {
+export const addSubscription = async ({ name, cost, renewDate, category }) => {
   if (!auth.currentUser) throw new Error("Not authenticated");
   return await addDoc(subsCollection, {
     name,
     cost: Number(cost),
     renewDate: Timestamp.fromDate(new Date(renewDate)),
+    category, // ✅ FIX: save category when adding
     recurrence: "monthly", // ✅ always set monthly
     userId: auth.currentUser.uid,
     createdAt: Timestamp.now(),

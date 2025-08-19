@@ -1,5 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+// Changed icon imports
+import { FaSun, FaMoon } from "react-icons/fa";
+import { FiArrowLeft, FiSave, FiXCircle } from "react-icons/fi";
 import {
   addSubscription,
   updateSubscription,
@@ -9,17 +12,19 @@ import { useAuth } from "../context/AuthContext";
 import "../css/subscriptionForm.css";
 
 export default function SubscriptionForm() {
-  const { id } = useParams(); // undefined for add
+  const { id } = useParams();
   const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
 
   const [name, setName] = useState("");
   const [cost, setCost] = useState("");
   const [renewDate, setRenewDate] = useState("");
-  const [category, setCategory] = useState(""); // new state for category
+  const [category, setCategory] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [initializing, setInitializing] = useState(true);
   const [error, setError] = useState("");
+  const [darkMode, setDarkMode] = useState(false);
+  const [activeIconText, setActiveIconText] = useState("");
 
   useEffect(() => {
     if (authLoading) return;
@@ -45,7 +50,7 @@ export default function SubscriptionForm() {
         if (existing.renewDate?.toDate) {
           setRenewDate(existing.renewDate.toDate().toISOString().slice(0, 10));
         }
-        setCategory(existing.category || ""); // load existing category if editing
+        setCategory(existing.category || "");
       } catch (e) {
         console.error(e);
         setError("Failed to load subscription.");
@@ -90,108 +95,110 @@ export default function SubscriptionForm() {
   };
 
   if (authLoading || initializing) return <div>Loading...</div>;
-  if (!user) return null; // redirected above
+  if (!user) return null;
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      style={{
-        maxWidth: 400,
-        display: "flex",
-        flexDirection: "column",
-        gap: 12,
-      }}
-    >
-      {/* Back to Dashboard Button */}
-      <button
-        type="button"
-        onClick={() => navigate("/dashboard")}
-        style={{
-          padding: "8px 12px",
-          backgroundColor: "#2196f3",
-          color: "white",
-          border: "none",
-          borderRadius: "5px",
-          cursor: "pointer",
-        }}
-      >
-        ← Back to Dashboard
-      </button>
-
-      <h2>{id ? "Edit" : "Add"} Subscription</h2>
-      {error && <div style={{ color: "red" }}>{error}</div>}
-
-      <label>
-        Name
-        <input
-          type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          required
-          disabled={submitting}
-        />
-      </label>
-
-      <label>
-        Cost
-        <input
-          type="number"
-          value={cost}
-          onChange={(e) => setCost(e.target.value)}
-          required
-          disabled={submitting}
-          min="0"
-        />
-      </label>
-
-      <label>
-        Renewal Date
-        <input
-          type="date"
-          value={renewDate}
-          onChange={(e) => setRenewDate(e.target.value)}
-          required
-          disabled={submitting}
-        />
-      </label>
-
-      <label>
-        Subscription Category
-        <select
-          value={category}
-          onChange={(e) => setCategory(e.target.value)}
-          required
-          disabled={submitting}
-        >
-          <option value="">-- Select Category --</option>
-          <option value="music">Music</option>
-          <option value="entertainment">Entertainment</option>
-          <option value="education">Education</option>
-          <option value="fitness">Fitness</option>
-          <option value="productivity">Productivity</option>
-          <option value="gaming">Gaming</option>
-          <option value="cloud_storage">Cloud Storage</option>
-        </select>
-      </label>
-
-      <div style={{ display: "flex", gap: 8 }}>
-        <button type="submit" disabled={submitting}>
-          {submitting
-            ? id
-              ? "Updating..."
-              : "Adding..."
-            : id
-            ? "Update"
-            : "Add"}
-        </button>
-        <button
-          type="button"
-          onClick={() => navigate("/dashboard")}
-          disabled={submitting}
-        >
-          Cancel
-        </button>
+    <div className={`subscription-container ${darkMode ? "dark-mode" : ""}`}>
+      <div className="dark-light-toggle" onClick={() => setDarkMode(!darkMode)}>
+        {darkMode ? <FaSun /> : <FaMoon />}
       </div>
-    </form>
+
+      <div className="subscription-card">
+        {/* Changed FaArrowLeft to FiArrowLeft */}
+        <FiArrowLeft
+          className="icon-btn back-icon"
+          onClick={() => {
+            navigate("/dashboard");
+            setActiveIconText("Back");
+          }}
+          title="Back to Dashboard"
+        />
+
+        <h2 className="subscription-title">
+          {id ? "Edit" : "Add"} Subscription
+        </h2>
+        {error && (
+          <div style={{ color: "#f44336", marginBottom: "10px" }}>{error}</div>
+        )}
+
+        <form onSubmit={handleSubmit}>
+          <label>
+            Name
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+              disabled={submitting}
+            />
+          </label>
+
+          <label>
+            Cost
+            <input
+              type="number"
+              value={cost}
+              onChange={(e) => setCost(e.target.value)}
+              required
+              disabled={submitting}
+              min="0"
+            />
+          </label>
+
+          <label>
+            Renewal Date
+            <input
+              type="date"
+              value={renewDate}
+              onChange={(e) => setRenewDate(e.target.value)}
+              required
+              disabled={submitting}
+            />
+          </label>
+
+          <label>
+            Subscription Category
+            <select
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              required
+              disabled={submitting}
+            >
+              <option value="">-- Select Category --</option>
+              <option value="music">Music</option>
+              <option value="entertainment">Entertainment</option>
+              <option value="education">Education</option>
+              <option value="fitness">Fitness</option>
+              <option value="productivity">Productivity</option>
+              <option value="gaming">Gaming</option>
+              <option value="cloud_storage">Cloud Storage</option>
+            </select>
+          </label>
+        </form>
+
+        <div className="form-buttons">
+          {/* Changed FaSave to FiSave */}
+          <button
+            type="submit"
+            className="icon-btn submit-icon"
+            disabled={submitting}
+            onClick={(e) => {
+              handleSubmit(e);
+              setActiveIconText("Save");
+            }}
+          >
+            <FiSave />
+          </button>
+          {/* Changed FaTimes to FiXCircle */}
+          <FiXCircle
+            className="icon-btn cancel-icon"
+            onClick={() => {
+              navigate("/dashboard");
+              setActiveIconText("Cancel");
+            }}
+          />
+        </div>
+      </div>
+    </div>
   );
 }

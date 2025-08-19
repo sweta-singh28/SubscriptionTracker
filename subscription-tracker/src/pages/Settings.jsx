@@ -22,6 +22,7 @@ import {
 } from "firebase/firestore";
 
 import { auth, db } from "../firebase";
+import "../css/settings.css";
 
 export default function Settings() {
   const { user } = useAuth();
@@ -59,7 +60,7 @@ export default function Settings() {
 
   if (!user) {
     return (
-      <div className="settings-wrap">
+      <div className="settings-page">
         <div className="settings-card">
           <h2>Settings</h2>
           <p>You’re not logged in.</p>
@@ -188,13 +189,13 @@ export default function Settings() {
   };
 
   return (
-    <div className="settings-wrap">
+    <div className="settings-page">
       <div className="settings-card">
         <h2>Settings</h2>
 
         {/* Back to Dashboard Button */}
         <button
-          className="btn"
+          className="settings-btn"
           style={{ marginBottom: "16px" }}
           onClick={() => navigate("/dashboard")}
         >
@@ -210,7 +211,7 @@ export default function Settings() {
               <div className="settings-value">{user.email}</div>
             </div>
             <div className="settings-btn-group">
-              <button className="btn" onClick={handleLogout}>
+              <button className="settings-btn" onClick={handleLogout}>
                 Logout
               </button>
             </div>
@@ -245,7 +246,7 @@ export default function Settings() {
               </div>
             </div>
 
-            <button type="submit" className="btn">
+            <button type="submit" className="settings-btn">
               Update Password
             </button>
           </form>
@@ -267,7 +268,7 @@ export default function Settings() {
               <option value={3}>3 days before</option>
               <option value={7}>7 days before</option>
             </select>
-            <button className="btn" onClick={savePrefs}>
+            <button className="settings-btn" onClick={savePrefs}>
               Save
             </button>
           </div>
@@ -279,7 +280,7 @@ export default function Settings() {
 
           <div className="settings-row">
             <button
-              className="btn-warn"
+              className="settings-btn-warn"
               onClick={handleDeleteAllSubscriptions}
               disabled={deletingAll}
             >
@@ -300,7 +301,7 @@ export default function Settings() {
           </div>
 
           <button
-            className="btn-danger"
+            className="settings-btn-danger"
             onClick={handleDeleteAccount}
             disabled={deletingAccount}
           >
