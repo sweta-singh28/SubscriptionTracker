@@ -16,17 +16,14 @@ import { auth } from "../firebase";
 // Reference to subscriptions collection
 const subsCollection = collection(db, "subscriptions");
 
-// Add new subscription
+// Add new subscription (always monthly)
 export const addSubscription = async ({ name, cost, renewDate }) => {
   if (!auth.currentUser) throw new Error("Not authenticated");
-
-  // renewDate comes from the form; store it as a Firestore Timestamp
-  const dateObj = new Date(renewDate);
-
   return await addDoc(subsCollection, {
     name,
     cost: Number(cost),
-    renewDate: Timestamp.fromDate(dateObj), // ✅ server uses renewDate
+    renewDate: Timestamp.fromDate(new Date(renewDate)),
+    recurrence: "monthly", // ✅ always set monthly
     userId: auth.currentUser.uid,
     createdAt: Timestamp.now(),
   });
@@ -55,12 +52,14 @@ export const updateSubscription = async (id, updates) => {
   const payload = { ...updates };
 
   if (updates.renewDate) {
-    const dateObj = new Date(updates.renewDate);
-    payload.renewDate = Timestamp.fromDate(dateObj); // ✅ keep full date
+    payload.renewDate = Timestamp.fromDate(new Date(updates.renewDate));
   }
   if (updates.cost !== undefined) {
     payload.cost = Number(updates.cost);
   }
+
+  // ✅ enforce monthly recurrence
+  payload.recurrence = "monthly";
 
   await updateDoc(ref, payload);
 };
