@@ -1,22 +1,23 @@
 import { useState, useEffect } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth, db } from "../firebase"; // db added for saving name
-import { doc, setDoc } from "firebase/firestore"; // Firestore functions
+import { auth, db } from "../firebase";
+import { doc, setDoc } from "firebase/firestore";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { useTheme } from "../pages/ThemeContext";
 import { FaSun, FaMoon } from "react-icons/fa";
 import "../css/register.css";
 
 function Register() {
   const { user } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
-  const [name, setName] = useState(""); // New state for name
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [darkMode, setDarkMode] = useState(false);
 
   useEffect(() => {
     if (user) navigate("/dashboard");
@@ -39,7 +40,6 @@ function Register() {
         password
       );
 
-      // Save name to Firestore
       await setDoc(doc(db, "users", userCredential.user.uid), {
         name: name,
         email: email,
@@ -59,16 +59,10 @@ function Register() {
     }
   };
 
-  const toggleDarkMode = () => {
-    setDarkMode(!darkMode);
-    document.body.classList.toggle("dark-mode", !darkMode);
-  };
-
   return (
-    <div className={`register-container ${darkMode ? "dark-mode" : ""}`}>
-      {/* Dark/Light toggle */}
-      <div className="dark-light-toggle" onClick={toggleDarkMode}>
-        {darkMode ? <FaSun /> : <FaMoon />}
+    <div className={`register-container ${theme}`}>
+      <div className="dark-light-toggle" onClick={toggleTheme}>
+        {theme === "dark" ? <FaSun /> : <FaMoon />}
       </div>
 
       <form onSubmit={handleRegister} className="register-form">
@@ -77,7 +71,6 @@ function Register() {
 
         {error && <p className="error-text">{error}</p>}
 
-        {/* Name Input */}
         <input
           type="text"
           placeholder="Full Name"
@@ -85,7 +78,6 @@ function Register() {
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
-
         <input
           type="email"
           placeholder="Email"
@@ -107,6 +99,7 @@ function Register() {
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
         />
+
         <button type="submit" disabled={loading}>
           {loading ? "Registering..." : "Register"}
         </button>
