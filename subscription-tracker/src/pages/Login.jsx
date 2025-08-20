@@ -3,17 +3,17 @@ import { useNavigate, Link } from "react-router-dom";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase";
 import { useAuth } from "../context/AuthContext";
+import { useTheme } from "../pages/ThemeContext";
 import "../css/login.css";
 import { FaSun, FaMoon } from "react-icons/fa";
 
 function Login() {
   const { user } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [darkMode, setDarkMode] = useState(false);
 
-  // Redirect if already logged in
   useEffect(() => {
     if (user) navigate("/dashboard");
   }, [user, navigate]);
@@ -28,16 +28,10 @@ function Login() {
     }
   };
 
-  const toggleDarkMode = () => {
-    setDarkMode(!darkMode);
-    document.body.classList.toggle("dark-mode", !darkMode);
-  };
-
   return (
-    <div className={`login-container ${darkMode ? "dark-mode" : ""}`}>
-      {/* Dark/Light toggle */}
-      <div className="dark-light-toggle" onClick={toggleDarkMode}>
-        {darkMode ? <FaSun /> : <FaMoon />}
+    <div className={`login-container ${theme}`}>
+      <div className="dark-light-toggle" onClick={toggleTheme}>
+        {theme === "dark" ? <FaSun /> : <FaMoon />}
       </div>
 
       <form onSubmit={handleLogin} className="login-form">

@@ -88,11 +88,11 @@
   position: absolute;
   top: 20px;
   left: 20px;
-  color: #2196f3;
+  color: #6a85b6;
 }
 
 .back-icon:hover {
-  color: #1976d2;
+  color: #4f6bb2;
 }
 
 .submit-icon {
@@ -101,11 +101,16 @@
   border: none;
   padding: 0;
 }
+.submit-icon:hover {
+  color: #3f8757ff;
+}
 
 .cancel-icon {
   color: #f44336;
 }
-
+.cancel-icon:hover {
+  color: #d4392eff;
+}
 .form-buttons {
   display: flex;
   justify-content: center;

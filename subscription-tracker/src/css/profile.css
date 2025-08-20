@@ -43,14 +43,6 @@
   z-index: 1;
 }
 
-/* .project-name {
-  font-size: 26px;
-  font-weight: bold;
-  background: linear-gradient(90deg, #0d27d5ff, #9a8c98);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  margin-bottom: 8px;
-} */
 
 .profile-title {
   font-size: 20px;
@@ -111,11 +103,11 @@
 
 /* Logout icon (red like screenshot) */
 .logout-icon {
-  color: #e63946;
+  color: #e94452ff;
 }
 .logout-icon:hover {
   transform: scale(1.2);
-  color: #b71c1c;
+  color: #b82727ff;
 }
 
 /* Dark/Light toggle */

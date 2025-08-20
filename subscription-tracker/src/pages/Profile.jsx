@@ -4,6 +4,7 @@ import { signOut } from "firebase/auth";
 import { auth, db } from "../firebase";
 import { doc, getDoc } from "firebase/firestore";
 import { useAuth } from "../context/AuthContext";
+import { useTheme } from "../pages/ThemeContext";
 import "../css/profile.css";
 import {
   FaSun,
@@ -15,11 +16,10 @@ import {
 
 function Profile() {
   const { user } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const [nameFromDB, setNameFromDB] = useState("");
-  const [darkMode, setDarkMode] = useState(false);
 
-  // Fetch name from Firestore
   useEffect(() => {
     if (user) {
       const fetchName = async () => {
@@ -51,27 +51,19 @@ function Profile() {
 
   const goDashboard = () => navigate("/dashboard");
 
-  const toggleDarkMode = () => {
-    setDarkMode(!darkMode);
-    document.body.classList.toggle("dark-mode", !darkMode);
-  };
-
   return (
-    <div className={`profile-container ${darkMode ? "dark-mode" : ""}`}>
-      {/* Dark/Light toggle */}
-      <div className="dark-light-toggle" onClick={toggleDarkMode}>
-        {darkMode ? <FaSun /> : <FaMoon />}
+    <div className={`profile-container ${theme}`}>
+      <div className="dark-light-toggle" onClick={toggleTheme}>
+        {theme === "dark" ? <FaSun /> : <FaMoon />}
       </div>
 
       <div className="profile-card">
         <h2 className="profile-title">Your Profile</h2>
 
-        {/* Avatar */}
         <div className="avatar-wrap">
           <FaUserCircle className="avatar-icon" />
         </div>
 
-        {/* Info */}
         <div className="info-row">
           <span className="label">Name:</span>
           <span className="value">{displayName}</span>
@@ -81,7 +73,6 @@ function Profile() {
           <span className="value">{email}</span>
         </div>
 
-        {/* Actions */}
         <div className="actions">
           <FaHome
             className="action-icon dashboard-icon"

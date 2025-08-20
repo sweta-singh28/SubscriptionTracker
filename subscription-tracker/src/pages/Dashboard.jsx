@@ -16,29 +16,16 @@ import {
   FaCog,
   FaSignOutAlt,
 } from "react-icons/fa";
+import { useTheme } from "../pages/ThemeContext"; // <- Added
 
 export default function Dashboard() {
   const { user, loading } = useAuth();
+  const { theme, toggleTheme } = useTheme(); // <- Use context
+
   const [subscriptions, setSubscriptions] = useState([]);
   const [upcoming, setUpcoming] = useState([]);
   const [search, setSearch] = useState("");
   const [reminderDays, setReminderDays] = useState(7);
-
-  const [theme, setTheme] = useState(() => {
-    if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("theme");
-      if (saved === "light" || saved === "dark") return saved;
-      const prefersDark =
-        window.matchMedia &&
-        window.matchMedia("(prefers-color-scheme: dark)").matches;
-      return prefersDark ? "dark" : "light";
-    }
-    return "dark";
-  });
-  useEffect(() => {
-    localStorage.setItem("theme", theme);
-  }, [theme]);
-  const toggleTheme = () => setTheme((t) => (t === "dark" ? "light" : "dark"));
 
   const navigate = useNavigate();
 
@@ -109,7 +96,7 @@ export default function Dashboard() {
     }
   };
 
-  // ===== Added: Group by Category (no other logic changed) =====
+  // ===== Group by Category =====
   const CATEGORY_ORDER = [
     "music",
     "entertainment",
@@ -270,7 +257,7 @@ export default function Dashboard() {
 
         {/* Footer */}
         <footer className="footer">
-          <p>© {new Date().getFullYear()} TrackStack – Sweta</p>
+          <p>© {new Date().getFullYear()} TrackStack</p>
           <p>Made with ❤ by Sweta</p>
           <div className="social-icons">
             <a

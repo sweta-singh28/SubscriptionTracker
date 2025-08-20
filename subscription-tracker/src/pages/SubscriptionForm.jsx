@@ -1,19 +1,20 @@
 import { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-// Changed icon imports
-import { FaSun, FaMoon } from "react-icons/fa";
-import { FiArrowLeft, FiSave, FiXCircle } from "react-icons/fi";
+import { useParams, useNavigate } from "react-router-dom";
+import { FaSun, FaMoon, FaHome, FaSave } from "react-icons/fa";
+import { MdCancel } from "react-icons/md";
+import { useAuth } from "../context/AuthContext";
+import { useTheme } from "../pages/ThemeContext";
 import {
   addSubscription,
   updateSubscription,
   getUserSubscriptions,
 } from "../utils/subscriptionService";
-import { useAuth } from "../context/AuthContext";
 import "../css/subscriptionForm.css";
 
 export default function SubscriptionForm() {
   const { id } = useParams();
   const { user, loading: authLoading } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
 
   const [name, setName] = useState("");
@@ -23,8 +24,6 @@ export default function SubscriptionForm() {
   const [submitting, setSubmitting] = useState(false);
   const [initializing, setInitializing] = useState(true);
   const [error, setError] = useState("");
-  const [darkMode, setDarkMode] = useState(false);
-  const [activeIconText, setActiveIconText] = useState("");
 
   useEffect(() => {
     if (authLoading) return;
@@ -46,13 +45,13 @@ export default function SubscriptionForm() {
           return;
         }
         setName(existing.name || "");
-        setCost(existing.cost !== undefined ? existing.cost.toString() : "");
+        setCost(existing.cost != null ? existing.cost.toString() : "");
         if (existing.renewDate?.toDate) {
           setRenewDate(existing.renewDate.toDate().toISOString().slice(0, 10));
         }
         setCategory(existing.category || "");
       } catch (e) {
-        console.error(e);
+        console.error("Failed to load subscription data:", e);
         setError("Failed to load subscription.");
       } finally {
         setInitializing(false);
@@ -62,7 +61,8 @@ export default function SubscriptionForm() {
 
   const validate = () => {
     if (!name.trim()) return "Name is required.";
-    if (!cost || isNaN(cost) || Number(cost) < 0)
+    const costValue = Number(cost);
+    if (cost === "" || isNaN(costValue) || costValue < 0)
       return "Cost must be a non-negative number.";
     if (!renewDate) return "Renewal date is required.";
     if (isNaN(new Date(renewDate).getTime())) return "Invalid date.";
@@ -80,14 +80,20 @@ export default function SubscriptionForm() {
     }
     setSubmitting(true);
     try {
+      const subscriptionData = {
+        name,
+        cost: Number(cost),
+        renewDate,
+        category,
+      };
       if (id) {
-        await updateSubscription(id, { name, cost, renewDate, category });
+        await updateSubscription(id, subscriptionData);
       } else {
-        await addSubscription({ name, cost, renewDate, category });
+        await addSubscription(subscriptionData);
       }
       navigate("/dashboard");
     } catch (err) {
-      console.error(err);
+      console.error("Save failed:", err);
       setError("Save failed: " + err.message);
     } finally {
       setSubmitting(false);
@@ -98,28 +104,16 @@ export default function SubscriptionForm() {
   if (!user) return null;
 
   return (
-    <div className={`subscription-container ${darkMode ? "dark-mode" : ""}`}>
-      <div className="dark-light-toggle" onClick={() => setDarkMode(!darkMode)}>
-        {darkMode ? <FaSun /> : <FaMoon />}
+    <div className={`subscription-container ${theme}`}>
+      <div className="dark-light-toggle" onClick={toggleTheme}>
+        {theme === "dark" ? <FaSun /> : <FaMoon />}
       </div>
 
       <div className="subscription-card">
-        {/* Changed FaArrowLeft to FiArrowLeft */}
-        <FiArrowLeft
-          className="icon-btn back-icon"
-          onClick={() => {
-            navigate("/dashboard");
-            setActiveIconText("Back");
-          }}
-          title="Back to Dashboard"
-        />
-
         <h2 className="subscription-title">
           {id ? "Edit" : "Add"} Subscription
         </h2>
-        {error && (
-          <div style={{ color: "#f44336", marginBottom: "10px" }}>{error}</div>
-        )}
+        {error && <div className="error-message">{error}</div>}
 
         <form onSubmit={handleSubmit}>
           <label>
@@ -174,30 +168,26 @@ export default function SubscriptionForm() {
               <option value="cloud_storage">Cloud Storage</option>
             </select>
           </label>
-        </form>
 
-        <div className="form-buttons">
-          {/* Changed FaSave to FiSave */}
-          <button
-            type="submit"
-            className="icon-btn submit-icon"
-            disabled={submitting}
-            onClick={(e) => {
-              handleSubmit(e);
-              setActiveIconText("Save");
-            }}
-          >
-            <FiSave />
-          </button>
-          {/* Changed FaTimes to FiXCircle */}
-          <FiXCircle
-            className="icon-btn cancel-icon"
-            onClick={() => {
-              navigate("/dashboard");
-              setActiveIconText("Cancel");
-            }}
-          />
-        </div>
+          <div className="form-buttons">
+            <FaHome
+              className="icon-btn dashboard-icon"
+              onClick={() => navigate("/dashboard")}
+              title="Back to Dashboard"
+            />
+            <button
+              type="submit"
+              className="icon-btn submit-icon"
+              disabled={submitting}
+            >
+              <FaSave />
+            </button>
+            <MdCancel
+              className="icon-btn cancel-icon"
+              onClick={() => navigate("/dashboard")}
+            />
+          </div>
+        </form>
       </div>
     </div>
   );

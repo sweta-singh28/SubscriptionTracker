@@ -11,21 +11,61 @@ body, .dashboard, .dashboard-page, .dashboard-container {
   overflow-x: hidden;
 }
 
-/* Make main grow & footer stick */
 .dashboard-container {
   flex: 1;
   display: flex;
   flex-direction: column;
+  padding: 0 3rem; /* increased side padding */
 }
+
+section {
+  width: 100%;
+  margin-bottom: 2rem;
+  padding-left: 1rem; /* increased left padding */
+  padding-right: 1rem; /* added right padding */
+}
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.5rem;
+  padding: 1rem 0; /* vertical padding only */
+  margin: 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
 
 /* Footer */
 .footer {
   margin-top: auto;
   text-align: center;
-  padding: 1rem;
-  font-size: 0.9rem;
-  opacity: 0.85;
+  padding: 1.5rem;
+  font-size: 1.1rem;
+  opacity: 0.95;
   animation: fadeInUp 1s ease-in-out;
+}
+
+.footer p {
+  margin: 0.3rem 0;
+}
+
+.footer .social-icons {
+  margin-top: 0.8rem;
+  display: flex;
+  justify-content: center;
+  gap: 1.2rem;
+  font-size: 1.5rem;
+}
+
+.footer .social-icons a {
+  color: #5f91edff;
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.footer .social-icons a:hover {
+  transform: scale(1.2);
+  color: #4179e0ff;
 }
 
 /* === Dashboard Animated Background === */
@@ -39,7 +79,6 @@ body, .dashboard, .dashboard-page, .dashboard-container {
   overflow-x: hidden;
 }
 
-/* Floating light waves like login */
 .dashboard-page::before,
 .dashboard-page::after {
   content: "";
@@ -56,10 +95,6 @@ body, .dashboard, .dashboard-page, .dashboard-container {
 .dashboard-page::after {
   animation-direction: reverse;
   opacity: 0.5;
-}
-
-/* Shimmer overlay */
-.dashboard-page::after {
   background: linear-gradient(
     rgba(255, 255, 255, 0.04) 0%,
     rgba(255, 255, 255, 0.08) 50%,
@@ -123,23 +158,25 @@ body, .dashboard, .dashboard-page, .dashboard-container {
 }
 
 .icon-btn.logout {
-  color: #a4a5e2ff;
+  color: #e94452ff;
 }
 
 .icon-btn.logout:hover {
-  color: #6a85b6;
+  color: #b82727ff;
 }
 
 /* === Search Bar with Button === */
 .search-bar-wrapper {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   margin: 2rem auto;
   gap: 1rem;
   animation: fadeInUp 1.2s ease-in-out;
-  width: 80%;
+  width: 100%;
   max-width: 700px;
+  position: relative;
+  z-index: 3;
 }
 
 .search-bar {
@@ -165,37 +202,42 @@ body, .dashboard, .dashboard-page, .dashboard-container {
 }
 
 .new-btn {
-  padding: 0.7rem 1.2rem;
+  flex-shrink: 0;
+  padding: 0.75rem 1.4rem;
   border-radius: 10px;
   border: none;
   background: linear-gradient(90deg, #6a85b6, #bac8e0);
   color: white;
   font-weight: bold;
   cursor: pointer;
-  transition: transform 0.25s ease, background 0.3s ease;
+  transition: transform 0.25s ease, background 0.3s ease, box-shadow 0.25s ease;
   box-shadow: 0 6px 14px rgba(0,0,0,0.25);
+  font-size: 1rem;
 }
 
 .new-btn:hover {
   background: linear-gradient(90deg, #5a76a6, #9fb1d4);
   transform: scale(1.07) translateY(-2px);
+  box-shadow: 0 8px 18px rgba(0,0,0,0.35);
 }
 
-/* === Cards Grid (NEW – turns rows into cards) === */
+/* === Sections & Cards === */
+section {
+  width: 100%;
+  margin-bottom: 2rem;
+  padding-left: 0.5rem; /* shift content slightly right for alignment */
+}
+
 .cards-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 1.5rem;
-  padding: 0 1rem;
-  position: relative;
-  z-index: 1;
+  padding: 1rem 0;
+  margin: 0;
+  width: 100%;
+  box-sizing: border-box;
 }
 
-/* Keep existing class (unused now but safe) */
-.subscriptions { padding: 2rem; position: relative; z-index: 1; }
-.subscription-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 1.5rem; }
-
-/* === Subscription Card === */
 .subscription-card {
   background: rgba(255, 255, 255, 0.95);
   border-radius: 14px;
@@ -214,10 +256,13 @@ body, .dashboard, .dashboard-page, .dashboard-container {
   box-shadow: 0 12px 28px rgba(0,0,0,0.35);
 }
 
-.card-title { font-size: 1.05rem; }
+.card-title {
+  font-size: 1.05rem;
+}
 
-/* Clickable helper */
-.clickable { cursor: pointer; }
+.clickable {
+  cursor: pointer;
+}
 
 /* === Dark Mode Overrides === */
 .dashboard-page.dark {
@@ -283,8 +328,7 @@ body, .dashboard, .dashboard-page, .dashboard-container {
 @media (max-width: 768px) {
   .navbar { flex-direction: column; gap: 0.8rem; text-align: center; }
   .search-bar-wrapper { flex-direction: column; }
-  .cards-grid { grid-template-columns: 1fr; } /* stack on mobile */
-  .subscription-list { grid-template-columns: 1fr; }
+  .cards-grid { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 480px) {

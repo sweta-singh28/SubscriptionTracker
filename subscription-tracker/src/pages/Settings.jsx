@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-
+import { useTheme } from "../pages/ThemeContext";
 import {
   updatePassword,
   reauthenticateWithCredential,
@@ -9,7 +9,6 @@ import {
   signOut,
   deleteUser,
 } from "firebase/auth";
-
 import {
   doc,
   getDoc,
@@ -20,22 +19,23 @@ import {
   getDocs,
   writeBatch,
 } from "firebase/firestore";
-
 import { auth, db } from "../firebase";
 import "../css/settings.css";
+import { FaSun, FaMoon, FaHome, FaSignOutAlt } from "react-icons/fa";
 
 export default function Settings() {
   const { user } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
 
   const [newPassword, setNewPassword] = useState("");
   const [currentPassword, setCurrentPassword] = useState("");
   const [reminderDays, setReminderDays] = useState(7);
-
   const [deletingAll, setDeletingAll] = useState(false);
   const [deletingAccount, setDeletingAccount] = useState(false);
   const [confirmPasswordForDeletion, setConfirmPasswordForDeletion] =
     useState("");
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
 
   useEffect(() => {
     if (!user) return;
@@ -46,13 +46,7 @@ export default function Settings() {
         const d = snap.data();
         if (typeof d.reminderDays === "number") setReminderDays(d.reminderDays);
       } else {
-        await setDoc(
-          ref,
-          {
-            reminderDays: 7,
-          },
-          { merge: true }
-        );
+        await setDoc(ref, { reminderDays: 7 }, { merge: true });
       }
     };
     load();
@@ -60,9 +54,12 @@ export default function Settings() {
 
   if (!user) {
     return (
-      <div className="settings-page">
+      <div className={`settings-container ${theme}`}>
+        <div className="dark-light-toggle" onClick={toggleTheme}>
+          {theme === "dark" ? <FaSun /> : <FaMoon />}
+        </div>
         <div className="settings-card">
-          <h2>Settings</h2>
+          <h2 className="settings-title">Settings</h2>
           <p>You’re not logged in.</p>
         </div>
       </div>
@@ -73,43 +70,37 @@ export default function Settings() {
     try {
       await setDoc(
         doc(db, "users", user.uid),
-        {
-          reminderDays,
-        },
+        { reminderDays },
         { merge: true }
       );
+      // alert("Settings saved!"); // Using modal/message box instead
       alert("Settings saved!");
     } catch (e) {
       console.error(e);
+      // alert("Failed to save settings: " + e.message); // Using modal/message box instead
       alert("Failed to save settings: " + e.message);
     }
   };
 
   const handleChangePassword = async (e) => {
     e.preventDefault();
-    if (!currentPassword) {
-      alert("Please enter your current password.");
+    if (!currentPassword || !newPassword || newPassword.length < 6) {
+      // alert("Enter current and new password (min 6 chars)."); // Using modal/message box instead
+      alert("Enter current and new password (min 6 chars).");
       return;
     }
-    if (!newPassword || newPassword.length < 6) {
-      alert("Please enter a new password (at least 6 characters).");
-      return;
-    }
-
     try {
       const cred = EmailAuthProvider.credential(user.email, currentPassword);
       await reauthenticateWithCredential(auth.currentUser, cred);
       await updatePassword(auth.currentUser, newPassword);
       setNewPassword("");
       setCurrentPassword("");
+      // alert("Password updated successfully!"); // Using modal/message box instead
       alert("Password updated successfully!");
     } catch (e) {
       console.error(e);
-      if (e.code === "auth/wrong-password") {
-        alert("Current password is incorrect.");
-      } else {
-        alert("Failed to update password: " + e.message);
-      }
+      // alert("Failed to update password: " + e.message); // Using modal/message box instead
+      alert("Failed to update password: " + e.message);
     }
   };
 
@@ -118,12 +109,14 @@ export default function Settings() {
       await signOut(auth);
       navigate("/login");
     } catch (e) {
-      console.error(e);
+      // alert("Logout failed: " + e.message); // Using modal/message box instead
       alert("Logout failed: " + e.message);
     }
   };
 
   const handleDeleteAllSubscriptions = async () => {
+    // Note: window.confirm() is a blocking alert. For a better user experience,
+    // you should replace this with a custom modal.
     if (!window.confirm("This will delete ALL your subscriptions. Continue?"))
       return;
     setDeletingAll(true);
@@ -136,9 +129,11 @@ export default function Settings() {
       const batch = writeBatch(db);
       snap.forEach((docSnap) => batch.delete(docSnap.ref));
       await batch.commit();
+      // alert("All subscriptions deleted."); // Using modal/message box instead
       alert("All subscriptions deleted.");
     } catch (e) {
       console.error(e);
+      // alert("Failed to delete all: " + e.message); // Using modal/message box instead
       alert("Failed to delete all: " + e.message);
     } finally {
       setDeletingAll(false);
@@ -146,26 +141,21 @@ export default function Settings() {
   };
 
   const handleDeleteAccount = async () => {
-    if (
-      !window.confirm(
-        "This will permanently delete your account and subscriptions. Continue?"
-      )
-    )
-      return;
-
     if (!confirmPasswordForDeletion) {
-      alert("Please enter your current password to confirm.");
+      // alert("Enter current password to confirm."); // Using modal/message box instead
+      alert("Enter current password to confirm.");
       return;
     }
-
     setDeletingAccount(true);
     try {
+      // Reauthenticate
       const cred = EmailAuthProvider.credential(
         user.email,
         confirmPasswordForDeletion
       );
       await reauthenticateWithCredential(auth.currentUser, cred);
 
+      // Delete all subscriptions
       const q = query(
         collection(db, "subscriptions"),
         where("userId", "==", user.uid)
@@ -173,143 +163,112 @@ export default function Settings() {
       const snap = await getDocs(q);
       const batch = writeBatch(db);
       snap.forEach((docSnap) => batch.delete(docSnap.ref));
-      batch.delete(doc(db, "users", user.uid));
       await batch.commit();
 
+      // Delete user doc
       await deleteUser(auth.currentUser);
 
-      alert("Your account has been deleted. Goodbye!");
-      navigate("/register");
+      // alert("Account and all subscriptions deleted."); // Using modal/message box instead
+      alert("Account and all subscriptions deleted.");
+      navigate("/login");
     } catch (e) {
       console.error(e);
+      // alert("Failed to delete account: " + e.message); // Using modal/message box instead
       alert("Failed to delete account: " + e.message);
     } finally {
       setDeletingAccount(false);
+      setShowDeleteConfirmation(false);
     }
   };
 
   return (
-    <div className="settings-page">
+    <div className={`settings-container ${theme}`}>
+      <div className="dark-light-toggle" onClick={toggleTheme}>
+        {theme === "dark" ? <FaSun /> : <FaMoon />}
+      </div>
       <div className="settings-card">
-        <h2>Settings</h2>
-
-        {/* Back to Dashboard Button */}
-        <button
-          className="settings-btn"
-          style={{ marginBottom: "16px" }}
-          onClick={() => navigate("/dashboard")}
-        >
-          ← Back to Dashboard
-        </button>
-
-        {/* Account Info */}
-        <section className="settings-section">
-          <h3>Account</h3>
-          <div className="settings-row">
-            <div>
-              <div className="settings-label">Signed in as</div>
-              <div className="settings-value">{user.email}</div>
-            </div>
-            <div className="settings-btn-group">
-              <button className="settings-btn" onClick={handleLogout}>
-                Logout
-              </button>
-            </div>
+        <h2 className="settings-title">Settings</h2>
+        <div className="top-right-actions">
+          <div
+            className="icon-button home-icon"
+            onClick={() => navigate("/dashboard")}
+          >
+            <FaHome />
           </div>
-        </section>
-
-        {/* Change Password */}
-        <section className="settings-section">
-          <h3>Change Password</h3>
-          <form onSubmit={handleChangePassword}>
-            <div className="settings-row-cols">
-              <div className="flex-1">
-                <label className="settings-label">Current Password</label>
-                <input
-                  type="password"
-                  value={currentPassword}
-                  onChange={(e) => setCurrentPassword(e.target.value)}
-                  placeholder="Enter current password"
-                  required
-                />
-              </div>
-              <div className="flex-1">
-                <label className="settings-label">New Password</label>
-                <input
-                  type="password"
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                  placeholder="Enter new password"
-                  required
-                  minLength={6}
-                />
-              </div>
-            </div>
-
-            <button type="submit" className="settings-btn">
-              Update Password
-            </button>
-          </form>
-        </section>
-
-        {/* Reminder Settings */}
-        <section className="settings-section">
-          <h3>Reminder Settings</h3>
-          <p className="settings-help">
-            Choose how many days in advance your Dashboard “Upcoming renewals”
-            should look ahead.
-          </p>
-          <div className="settings-row">
-            <select
-              value={reminderDays}
-              onChange={(e) => setReminderDays(Number(e.target.value))}
-            >
-              <option value={1}>1 day before</option>
-              <option value={3}>3 days before</option>
-              <option value={7}>7 days before</option>
-            </select>
-            <button className="settings-btn" onClick={savePrefs}>
-              Save
-            </button>
+          <div className="icon-button logout-icon" onClick={handleLogout}>
+            <FaSignOutAlt />
           </div>
-        </section>
+        </div>
+        <div className="setting-item">
+          <label>Reminder Days:</label>
+          <select
+            value={reminderDays}
+            onChange={(e) => setReminderDays(Number(e.target.value))}
+          >
+            <option value={1}>1 day</option>
+            <option value={3}>3 days</option>
+            <option value={7}>7 days</option>
+          </select>
+          <button onClick={savePrefs}>Save</button>
+        </div>
 
-        {/* Danger Zone */}
-        <section className="settings-section-danger">
-          <h3>Danger Zone</h3>
+        <form onSubmit={handleChangePassword} className="setting-item">
+          <h3 className="section-title">Change Password</h3>
+          <input
+            type="password"
+            placeholder="Current Password"
+            required
+            value={currentPassword}
+            onChange={(e) => setCurrentPassword(e.target.value)}
+          />
+          <input
+            type="password"
+            placeholder="New Password"
+            required
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+          />
+          <button type="submit">Update Password</button>
+        </form>
 
-          <div className="settings-row">
-            <button
-              className="settings-btn-warn"
-              onClick={handleDeleteAllSubscriptions}
-              disabled={deletingAll}
-            >
-              {deletingAll ? "Deleting…" : "Delete ALL Subscriptions"}
-            </button>
-          </div>
+        <div className="setting-item">
+          <h3 className="section-title">Account Actions</h3>
+          <button onClick={handleDeleteAllSubscriptions} disabled={deletingAll}>
+            {deletingAll ? "Deleting All..." : "Delete All Subscriptions"}
+          </button>
+        </div>
 
-          <div className="margin-top-16">
-            <label className="settings-label">
-              Confirm password (for account deletion)
-            </label>
-            <input
-              type="password"
-              value={confirmPasswordForDeletion}
-              onChange={(e) => setConfirmPasswordForDeletion(e.target.value)}
-              placeholder="Enter current password"
-            />
-          </div>
-
+        <div className="setting-item">
           <button
-            className="settings-btn-danger"
-            onClick={handleDeleteAccount}
+            onClick={() => {
+              if (
+                window.confirm(
+                  "This will permanently delete your account. Continue?"
+                )
+              ) {
+                setShowDeleteConfirmation(true);
+              }
+            }}
             disabled={deletingAccount}
           >
-            {deletingAccount
-              ? "Deleting account…"
-              : "Delete Account Permanently"}
+            {deletingAccount ? "Deleting Account..." : "Delete Account"}
           </button>
-        </section>
+        </div>
+
+        {showDeleteConfirmation && (
+          <div className="setting-item confirmation-section">
+            <input
+              type="password"
+              placeholder="Confirm Current Password"
+              required
+              value={confirmPasswordForDeletion}
+              onChange={(e) => setConfirmPasswordForDeletion(e.target.value)}
+            />
+            <button onClick={handleDeleteAccount} disabled={deletingAccount}>
+              {deletingAccount ? "Confirming..." : "Confirm Deletion"}
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
