@@ -11,6 +11,12 @@ body, .dashboard, .dashboard-page, .dashboard-container {
   overflow-x: hidden;
 }
 
+.subscription-card {
+width: 100%; /* respect the grid cell width */
+max-width: 100%; /* prevent overflow */
+box-sizing: border-box;
+}
+
 .dashboard-container {
   flex: 1;
   display: flex;
