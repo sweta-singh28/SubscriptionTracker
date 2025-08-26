@@ -16,11 +16,21 @@ import {
   FaCog,
   FaSignOutAlt,
 } from "react-icons/fa";
-import { useTheme } from "../pages/ThemeContext"; // <- Added
+import { useTheme } from "../pages/ThemeContext";
+
+// ✅ Charts
+import {
+  PieChart,
+  Pie,
+  Cell,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
 
 export default function Dashboard() {
   const { user, loading } = useAuth();
-  const { theme, toggleTheme } = useTheme(); // <- Use context
+  const { theme, toggleTheme } = useTheme();
 
   const [subscriptions, setSubscriptions] = useState([]);
   const [upcoming, setUpcoming] = useState([]);
@@ -114,6 +124,7 @@ export default function Dashboard() {
     productivity: "Productivity",
     gaming: "Gaming",
     cloud_storage: "Cloud Storage",
+    other: "Other",
   };
   const titleCase = (str) =>
     (str || "")
@@ -134,6 +145,31 @@ export default function Dashboard() {
       .filter((k) => !CATEGORY_ORDER.includes(k))
       .sort(),
   ];
+
+  // ✅ Spending Data for Pie Chart
+  const spendingData = Object.keys(groupedByCategory).map((cat) => {
+    const total = groupedByCategory[cat].reduce(
+      (sum, s) => sum + (Number(s.cost) || 0),
+      0
+    );
+    return {
+      name: CATEGORY_LABELS[cat] || titleCase(cat),
+      value: total,
+    };
+  });
+
+  const totalSpending = spendingData.reduce((sum, item) => sum + item.value, 0);
+
+  const COLORS = [
+    "#5a587dff",
+    "#668d75ff",
+    "#736445ff",
+    "#997365ff",
+    "#48635eff",
+    "#6f5e38ff",
+    "#8e4f2fff",
+  ];
+
   // ============================================================
 
   return (
@@ -252,6 +288,42 @@ export default function Dashboard() {
                 </div>
               </div>
             ))
+          )}
+        </section>
+
+        {/* ✅ Spending Pie Chart moved just above footer */}
+        <section className="spending-section">
+          <h2>User Spending by Category</h2>
+          {spendingData.length === 0 ? (
+            <p>No spending data available.</p>
+          ) : (
+            <div className="spending-chart-wrapper">
+              <ResponsiveContainer width="100%" height={400}>
+                <PieChart>
+                  <Pie
+                    data={spendingData}
+                    dataKey="value"
+                    nameKey="name"
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={140}
+                    label
+                  >
+                    {spendingData.map((entry, index) => (
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={COLORS[index % COLORS.length]}
+                      />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                  <Legend />
+                </PieChart>
+              </ResponsiveContainer>
+              <p className="total-spending">
+                Total Monthly Spending: ₹{totalSpending}
+              </p>
+            </div>
           )}
         </section>
 
