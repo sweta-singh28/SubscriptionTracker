@@ -300,6 +300,12 @@ section {
   box-shadow: 0 8px 20px rgba(0,0,0,0.6);
 }
 
+.total-spending {
+    text-align: center;
+    font-weight: bold;
+    margin-top: 1rem;
+}
+
 /* === Animations === */
 @keyframes fadeInUp {
   from { opacity: 0; transform: translateY(30px); }
