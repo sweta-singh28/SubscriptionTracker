@@ -160,14 +160,17 @@ export default function Dashboard() {
 
   const totalSpending = spendingData.reduce((sum, item) => sum + item.value, 0);
 
+  // Updated COLORS for the Pie Chart
   const COLORS = [
-    "#5a587dff",
-    "#668d75ff",
-    "#736445ff",
-    "#997365ff",
-    "#48635eff",
-    "#6f5e38ff",
-    "#8e4f2fff",
+    "#7874c2ff", // Vibrant Indigo
+    "#8ceab0ff", // Mint Green
+    "#ffc658", // Golden Yellow
+    "#ff7f50", // Coral
+    "#586d45ff", // Lime Green
+    "#d0ed57", // Bright Yellow-Green
+    "#86c2cfff", // Sky Blue
+    "#ff6f61", // Poppy Red
+    "#191419ff", // Magenta
   ];
 
   // ============================================================
