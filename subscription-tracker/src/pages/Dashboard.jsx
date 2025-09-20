@@ -275,7 +275,7 @@ export default function Dashboard() {
 
         {/* All Subscriptions — grouped by Category */}
         <section>
-          <h2>All Subscriptions</h2>
+          <h2 >All Subscriptions</h2>
           {filteredSubs.length === 0 ? (
             <div className="empty-state">
               <p>No subscriptions found. Add your first one!</p>
@@ -335,9 +335,9 @@ export default function Dashboard() {
                   <Legend />
                 </PieChart>
               </ResponsiveContainer>
-              <p className="total-spending">
+              <card className="total-spending">
                 Total Monthly Spending: ₹{totalSpending}
-              </p>
+              </card>
             </div>
           )}
         </section>

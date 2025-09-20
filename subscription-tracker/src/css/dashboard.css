@@ -5,13 +5,41 @@ html, body {
   -webkit-overflow-scrolling: touch; /* smooth touch scrolling on iOS */
   scroll-behavior: smooth;
 }
-
+h2{
+  text-align: center;
+}
 /* Performance & scrolling hints */
 .dashboard-page, .dashboard-container {
   touch-action: pan-y; /* prioritize vertical scrolling */
   will-change: transform, background-position;
   -webkit-transform: translateZ(0);
   transform: translateZ(0);
+}
+.spending-chart-wrapper {
+  display: flex;
+  flex-direction: column;  /* stack chart & card vertically */
+  align-items: center;     /* center horizontally */
+  justify-content: center; /* optional: center vertically if parent has height */
+  gap: 20px;               /* space between chart and card */
+}
+
+
+.total-spending {
+  width: 300px;                /* fixed width */
+  margin: 20px auto;           /* center horizontally */
+  padding: 20px;               /* spacing inside */
+  text-align: center;          
+  background: #2c2c2c;         /* dark grey */
+  color: #fff;                 /* white text */
+  border-radius: 12px;         /* rounded corners */
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2); /* subtle shadow */
+  font-size: 1.2rem;           /* slightly bigger text */
+  font-weight: 500;            /* medium bold */
+  transition: transform 0.2s ease;
+}
+
+.total-spending:hover {
+  transform: translateY(-5px); /* hover effect */
 }
 
 /* === Global Layout === */
@@ -315,6 +343,8 @@ section {
   background: rgba(255, 255, 255, 0.98); /* white block */
   border-radius: 14px;
   padding: 1rem 1.2rem;
+  margin-left: 2rem;
+  margin-right: 2rem;
   margin-bottom: 1.5rem;
   box-shadow: 0 8px 25px rgba(0,0,0,0.06);
   border: 1px solid rgba(0,0,0,0.06);
