@@ -139,12 +139,15 @@ export default function Dashboard() {
     acc[key].push(s);
     return acc;
   }, {});
+
   const orderedCategoryKeys = [
     ...CATEGORY_ORDER.filter((k) => groupedByCategory[k]?.length),
     ...Object.keys(groupedByCategory)
       .filter((k) => !CATEGORY_ORDER.includes(k))
       .sort(),
   ];
+
+  // NOTE: removed per-request grouping for upcoming (single upcoming section only)
 
   // ✅ Spending Data for Pie Chart
   const spendingData = Object.keys(groupedByCategory).map((cat) => {
@@ -174,7 +177,6 @@ export default function Dashboard() {
   ];
 
   // ============================================================
-
   return (
     <div className={`dashboard-page ${theme}`}>
       <div className="dashboard-container">
@@ -240,24 +242,34 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Upcoming Renewals */}
+        {/* Upcoming Renewals — SINGLE SECTION (no categories) */}
         <section>
-          <h2>Upcoming Renewals ({reminderDays} days)</h2>
-          {upcoming.length === 0 && <p>None soon.</p>}
-          <div className="cards-grid">
-            {upcoming.map((s) => (
-              <div
-                key={s.id}
-                className="subscription-card clickable"
-                role="button"
-                tabIndex={0}
-                onClick={() => openDetail(s.id)}
-                onKeyDown={(e) => onCardKeyDown(e, s.id)}
-                title="View details"
-              >
-                <strong className="card-title">{s.name}</strong>
+          <h2>Upcoming Renewals</h2>
+          {/* Use the same white "category-section" wrapper so upcoming gets the white block look */}
+          <div className="category-section upcoming-section">
+            <h2 className="category-title">({reminderDays} days)</h2>
+
+            {upcoming.length === 0 ? (
+              <p>None soon.</p>
+            ) : (
+              <div className="upcoming-list-wrapper">
+                <div className="cards-grid">
+                  {upcoming.map((s) => (
+                    <div
+                      key={s.id}
+                      className="subscription-card blue-card clickable"
+                      role="button"
+                      tabIndex={0}
+                      onClick={() => openDetail(s.id)}
+                      onKeyDown={(e) => onCardKeyDown(e, s.id)}
+                      title="View details"
+                    >
+                      <strong className="card-title">{s.name}</strong>
+                    </div>
+                  ))}
+                </div>
               </div>
-            ))}
+            )}
           </div>
         </section>
 
@@ -270,7 +282,7 @@ export default function Dashboard() {
             </div>
           ) : (
             orderedCategoryKeys.map((catKey) => (
-              <div key={catKey} className="category-block">
+              <div key={catKey} className="category-section">
                 <h3 className="category-title">
                   {CATEGORY_LABELS[catKey] || titleCase(catKey)}
                 </h3>
@@ -278,7 +290,7 @@ export default function Dashboard() {
                   {groupedByCategory[catKey].map((s) => (
                     <div
                       key={s.id}
-                      className="subscription-card clickable"
+                      className="subscription-card blue-card clickable"
                       role="button"
                       tabIndex={0}
                       onClick={() => openDetail(s.id)}

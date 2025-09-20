@@ -94,11 +94,11 @@
 
 /* Dashboard icon */
 .dashboard-icon {
-  color: #6a85b6; /* bluish theme */
+  color: #417cebff; /* bluish theme */
 }
 .dashboard-icon:hover {
   transform: scale(1.2);
-  color: #4f6bb2;
+  color: #536dadff;
 }
 
 /* Logout icon (red like screenshot) */
