@@ -202,49 +202,49 @@
 }
 
 /* Dark mode styles */
-body.dark-mode,
-.login-container.dark-mode {
+body.dark,
+.login-container.dark {
   background: linear-gradient(135deg, #1f1f1f, #3b3b3b);
 }
 
-body.dark-mode .login-form,
-.login-container.dark-mode .login-form {
+body.dark .login-form,
+.login-container.dark .login-form {
   background: rgba(30, 30, 30, 0.95);
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
 }
 
-body.dark-mode .login-form input {
+body.dark .login-form input {
   background: #2b2b2b;
   border: 1px solid #555;
   color: #eee;
 }
 
-body.dark-mode .login-form input:focus {
+body.dark .login-form input:focus {
   border-color: #9a8c98;
   box-shadow: 0 0 8px rgba(154, 140, 152, 0.5);
 }
 
-body.dark-mode .login-form button {
+body.dark .login-form button {
   background: linear-gradient(90deg, #444, #777);
 }
 
-body.dark-mode .login-form button:hover {
+body.dark .login-form button:hover {
   box-shadow: 0 0 12px rgba(255, 255, 255, 0.3);
 }
 
-body.dark-mode .project-name {
+body.dark .project-name {
   background: linear-gradient(90deg, #e0e0e0, #aaa);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
-body.dark-mode .login-title,
-body.dark-mode .register-text,
-body.dark-mode .register-text a {
+body.dark .login-title,
+body.dark .register-text,
+body.dark .register-text a {
   color: #ddd;
 }
 
-body.dark-mode .register-text a {
+body.dark .register-text a {
   color: #aaa;
 }
 

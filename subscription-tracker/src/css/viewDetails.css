@@ -133,27 +133,27 @@
 }
 
 /* Dark mode */
-body.dark-mode,
-.view-container.dark-mode {
+body.dark,
+.view-container.dark {
   background: linear-gradient(135deg, #1f1f1f, #3b3b3b);
 }
 
-body.dark-mode .view-card,
-.view-container.dark-mode .view-card {
+body.dark .view-card,
+.view-container.dark .view-card {
   background: rgba(30, 30, 30, 0.95);
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
 }
 
-body.dark-mode .view-card p {
+body.dark .view-card p {
   color: #ddd;
 }
 
-body.dark-mode .project-name {
+body.dark .project-name {
   background: linear-gradient(90deg, #e0e0e0, #aaa);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
-body.dark-mode .view-title {
+body.dark .view-title {
   color: #ddd;
 }

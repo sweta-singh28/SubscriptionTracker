@@ -124,23 +124,51 @@
 .dark-light-toggle:hover {
   transform: scale(1.2);
 }
-
-/* Dark mode */
-body.dark-mode,
-.profile-container.dark-mode {
+/* Dark Mode for Profile Page */
+.profile-container.dark {
   background: linear-gradient(135deg, #1f1f1f, #3b3b3b);
 }
-body.dark-mode .profile-card {
+
+.profile-container.dark::before,
+.profile-container.dark::after {
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.05) 20%, transparent 70%);
+}
+
+.profile-container.dark .profile-card {
   background: rgba(30, 30, 30, 0.95);
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
 }
-body.dark-mode .profile-title,
-body.dark-mode .label,
-body.dark-mode .value {
+
+.profile-container.dark .profile-title,
+.profile-container.dark .label,
+.profile-container.dark .value {
   color: #ddd;
 }
-body.dark-mode .avatar-icon {
+
+.profile-container.dark .avatar-icon {
   color: #aaa;
+}
+
+/* Action icons in dark mode */
+.profile-container.dark .dashboard-icon {
+  color: #5a8ad6;
+}
+
+.profile-container.dark .dashboard-icon:hover {
+  color: #7ca0e0;
+}
+
+.profile-container.dark .logout-icon {
+  color: #ff6b6b;
+}
+
+.profile-container.dark .logout-icon:hover {
+  color: #ff4a4a;
+}
+
+/* Dark mode toggle button remains visible */
+.profile-container.dark .dark-light-toggle {
+  color: #fff;
 }
 
 /* Animations */

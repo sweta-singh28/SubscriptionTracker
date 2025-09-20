@@ -159,49 +159,49 @@
 }
 
 /* Dark mode styles */
-body.dark-mode,
-.register-container.dark-mode {
+body.dark,
+.register-container.dark {
   background: linear-gradient(135deg, #1f1f1f, #3b3b3b);
 }
 
-body.dark-mode .register-form,
-.register-container.dark-mode .register-form {
+body.dark .register-form,
+.register-container.dark .register-form {
   background: rgba(30, 30, 30, 0.95);
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
 }
 
-body.dark-mode .register-form input {
+body.dark .register-form input {
   background: #2b2b2b;
   border: 1px solid #555;
   color: #eee;
 }
 
-body.dark-mode .register-form input:focus {
+body.dark .register-form input:focus {
   border-color: #9a8c98;
   box-shadow: 0 0 8px rgba(154, 140, 152, 0.5);
 }
 
-body.dark-mode .register-form button {
+body.dark .register-form button {
   background: linear-gradient(90deg, #444, #777);
 }
 
-body.dark-mode .register-form button:hover {
+body.dark .register-form button:hover {
   box-shadow: 0 0 12px rgba(255, 255, 255, 0.3);
 }
 
-body.dark-mode .project-name {
+body.dark .project-name {
   background: linear-gradient(90deg, #e0e0e0, #aaa);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
-body.dark-mode .register-title,
-body.dark-mode .register-text,
-body.dark-mode .register-text a {
+body.dark .register-title,
+body.dark .register-text,
+body.dark .register-text a {
   color: #ddd;
 }
 
-body.dark-mode .register-text a {
+body.dark .register-text a {
   color: #aaa;
 }
 

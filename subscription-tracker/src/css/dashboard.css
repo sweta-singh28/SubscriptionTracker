@@ -401,7 +401,10 @@ section {
   color: rgba(0,0,0,0.6);
   margin-left: 0.4rem;
 }
-
+.dashboard-page.dark {
+  background: rgba(30, 30, 30, 0.95);
+  border: 1px solid rgba(255,255,255,0.03);
+}
 /* Dark Mode Overrides for new elements */
 .dashboard-page.dark .category-section {
   background: rgba(30, 30, 30, 0.95);
@@ -497,4 +500,17 @@ section {
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
   }
+}
+/* Dark mode navbar */
+.dashboard-page.dark .navbar {
+  background: rgba(30, 30, 30, 0.9); /* dark translucent background */
+  box-shadow: 0 8px 25px rgba(0,0,0,0.6);
+  border-radius: 14px;
+  color: #eee; /* text/icons inside navbar */
+  backdrop-filter: blur(14px); /* keep blur effect */
+}
+.dashboard-page.dark .navbar .nav-left,
+.dashboard-page.dark .navbar .nav-right,
+.dashboard-page.dark .navbar .logo {
+  color: #f1f1f1; /* adjust icon/text color for dark mode */
 }
