@@ -1,4 +1,20 @@
 /* === Global Layout === */
+html, body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-overflow-scrolling: touch; /* smooth touch scrolling on iOS */
+  scroll-behavior: smooth;
+}
+
+/* Performance & scrolling hints */
+.dashboard-page, .dashboard-container {
+  touch-action: pan-y; /* prioritize vertical scrolling */
+  will-change: transform, background-position;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+}
+
+/* === Global Layout === */
 body, .dashboard, .dashboard-page, .dashboard-container {
   margin: 0;
   padding: 0;
@@ -12,16 +28,20 @@ body, .dashboard, .dashboard-page, .dashboard-container {
 }
 
 .subscription-card {
-width: 100%; /* respect the grid cell width */
-max-width: 100%; /* prevent overflow */
-box-sizing: border-box;
+  width: 100%; /* respect the grid cell width */
+  max-width: 100%; /* prevent overflow */
+  box-sizing: border-box;
 }
 
+/* Promote complex subtrees to their own paint layer where appropriate */
 .dashboard-container {
   flex: 1;
   display: flex;
   flex-direction: column;
   padding: 0 3rem; /* increased side padding */
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  will-change: transform;
 }
 
 section {
@@ -39,8 +59,8 @@ section {
   margin: 0;
   width: 100%;
   box-sizing: border-box;
+  contain: layout; /* help browser isolate layout */
 }
-
 
 /* Footer */
 .footer {
@@ -83,10 +103,13 @@ section {
   animation: gradientShiftFast 8s ease-in-out infinite, fadeInBg 1.2s ease-in-out;
   position: relative;
   overflow-x: hidden;
+  will-change: background-position, transform;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
 }
 
-.dashboard-page::before,
-.dashboard-page::after {
+/* big animated overlays — isolate painting and use GPU */
+.dashboard-page::before, .dashboard-page::after {
   content: "";
   position: absolute;
   width: 200%;
@@ -96,6 +119,13 @@ section {
   background: radial-gradient(circle, rgba(255,255,255,0.08) 20%, transparent 70%);
   animation: rotateBg 50s linear infinite;
   z-index: 0;
+  pointer-events: none; /* ensure these don't block input */
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  contain: paint; /* try to isolate repaint region */
 }
 
 .dashboard-page::after {
@@ -124,6 +154,9 @@ section {
   animation: fadeInUp 1s ease-in-out;
   position: relative;
   z-index: 2;
+  will-change: transform;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
 }
 
 .nav-left, .nav-right {
@@ -255,6 +288,13 @@ section {
   min-height: 88px;
   display: flex;
   align-items: center;
+
+  /* performance hints */
+  will-change: transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
 }
 
 .subscription-card:hover {
@@ -270,27 +310,82 @@ section {
   cursor: pointer;
 }
 
-/* === Dark Mode Overrides === */
-.dashboard-page.dark {
-  background: linear-gradient(135deg, #1f1f1f, #3b3b3b);
+/* === NEW: Category Section (white block) & Blue subscription cards inside === */
+.category-section {
+  background: rgba(255, 255, 255, 0.98); /* white block */
+  border-radius: 14px;
+  padding: 1rem 1.2rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.06);
+  border: 1px solid rgba(0,0,0,0.06);
+  z-index: 2;
+
+  will-change: transform;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
 }
 
-.dashboard-page.dark .navbar {
-  background: rgba(30, 30, 30, 0.9);
+/* Category title styling (inside white block) */
+.category-section .category-title {
+  margin: 0;
+  padding: 0.4rem 0 0.8rem;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #111;
+}
+
+/* Blue clickable subscription cards to sit inside the white category section */
+.subscription-card.blue-card {
+  background: linear-gradient(90deg, #6a85b6, #bac8e0); /* matches header/background blue */
+  color: #fff;
+  border: none;
+  box-shadow: 0 8px 22px rgba(0,0,0,0.38);
+  min-height: 88px;
+  display: flex;
+  align-items: center;
+
+  will-change: transform;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+}
+
+.subscription-card.blue-card .card-title {
+  color: #fff;
+}
+
+/* Hover state for blue cards (preserve animation/interaction) */
+.subscription-card.blue-card:hover {
+  transform: translateY(-8px) scale(1.03);
+  box-shadow: 0 12px 28px rgba(0,0,0,0.5);
+}
+
+/* subtle difference for upcoming category blocks so user can distinguish them */
+.upcoming-category {
+  border-left: 4px solid rgba(106,133,182,0.9);
+}
+
+/* Upcoming count badge */
+.upcoming-count {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: rgba(0,0,0,0.6);
+  margin-left: 0.4rem;
+}
+
+/* Dark Mode Overrides for new elements */
+.dashboard-page.dark .category-section {
+  background: rgba(30, 30, 30, 0.95);
+  border: 1px solid rgba(255,255,255,0.03);
+}
+
+.dashboard-page.dark .category-section .category-title {
   color: #f1f1f1;
-  box-shadow: 0 8px 25px rgba(0,0,0,0.6);
 }
 
-.dashboard-page.dark .logo {
-  background: linear-gradient(90deg, #e0e0e0, #aaa);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.dashboard-page.dark .search-bar input {
-  background: #2b2b2b;
-  border: 1px solid #555;
-  color: #eee;
+.dashboard-page.dark .subscription-card.blue-card {
+  /* keep gradient but slightly darker for contrast */
+  background: linear-gradient(90deg, #4e5a8aff, #8aa0c6ff);
+  color: #fff;
 }
 
 .dashboard-page.dark .subscription-card {
@@ -300,10 +395,15 @@ section {
   box-shadow: 0 8px 20px rgba(0,0,0,0.6);
 }
 
-.total-spending {
-    text-align: center;
-    font-weight: bold;
-    margin-top: 1rem;
+/* === Specific tweaks for the upcoming-section (inherits category-section) === */
+/* Keep these minimal so visuals/animations/themes aren't changed */
+.upcoming-section {
+  /* intentionally left mostly to inherit .category-section styles */
+}
+
+.upcoming-section .upcoming-list-wrapper {
+  /* ensure internal layout spacing matches other category sections */
+  padding-top: 0.2rem;
 }
 
 /* === Animations === */
@@ -320,17 +420,21 @@ section {
   100% { background-position: 0% 50%; }
 }
 
+/* Use translate3d to ensure GPU compositing for the float motion */
 @keyframes floatEffect {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-6px); }
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50% { transform: translate3d(0, -6px, 0); }
 }
 
 @keyframes softWave {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50% { transform: translate3d(0, -10px, 0); }
 }
 
-@keyframes rotateBg { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+@keyframes rotateBg {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
 
 /* === Responsive === */
 @media (max-width: 1024px) {
@@ -343,9 +447,24 @@ section {
   .cards-grid { grid-template-columns: 1fr; }
 }
 
+/* On small screens, reduce the continuous floating animation to save performance */
 @media (max-width: 480px) {
   .navbar .logo { font-size: 1.4rem; }
   .theme-toggle { font-size: 1.2rem; }
   .search-bar input { font-size: 0.9rem; padding: 0.7rem; }
   .subscription-card { padding: 1rem; }
+
+  /* reduce heavy continuous animation on very small devices */
+  .subscription-card {
+    animation-duration: 8s;
+  }
+}
+
+/* Respect user preference for reduced motion (accessibility) */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
 }

@@ -55,7 +55,11 @@ export default function Settings() {
   if (!user) {
     return (
       <div className={`settings-container ${theme}`}>
-        <div className="dark-light-toggle" onClick={toggleTheme}>
+        <div
+          className="dark-light-toggle"
+          style={{ transform: "translateX(-28px)" }}
+          onClick={toggleTheme}
+        >
           {theme === "dark" ? <FaSun /> : <FaMoon />}
         </div>
         <div className="settings-card">
@@ -183,7 +187,11 @@ export default function Settings() {
 
   return (
     <div className={`settings-container ${theme}`}>
-      <div className="dark-light-toggle" onClick={toggleTheme}>
+      <div
+        className="dark-light-toggle"
+        style={{ transform: "translateX(-28px)" }}
+        onClick={toggleTheme}
+      >
         {theme === "dark" ? <FaSun /> : <FaMoon />}
       </div>
       <div className="settings-card">
