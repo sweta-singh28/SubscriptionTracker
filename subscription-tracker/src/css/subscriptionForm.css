@@ -162,25 +162,25 @@
 }
 
 /* Dark Mode */
-body.dark-mode,
-.subscription-container.dark-mode {
+body.dark,
+.subscription-container.dark {
   background: linear-gradient(135deg, #1f1f1f, #3b3b3b);
 }
 
-body.dark-mode .subscription-card,
-.subscription-container.dark-mode .subscription-card {
+body.dark .subscription-card,
+.subscription-container.dark .subscription-card {
   background: rgba(30, 30, 30, 0.95);
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
 }
 
-body.dark-mode .subscription-card label,
-body.dark-mode .subscription-card input,
-body.dark-mode .subscription-card select {
+body.dark .subscription-card label,
+body.dark .subscription-card input,
+body.dark .subscription-card select {
   color: #ddd;
   background: #333;
   border: 1px solid #555;
 }
 
-body.dark-mode .subscription-title {
+body.dark .subscription-title {
   color: #ddd;
 }
